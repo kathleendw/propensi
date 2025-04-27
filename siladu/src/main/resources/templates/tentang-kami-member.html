@@ -1,0 +1,173 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <style>
+        
+    </style>
+  <title>Home</title>
+</head>
+
+<body>
+  <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <div class="container text-center">
+    <div class="row pt-5 pb-2">
+      <h1>
+        Selamat Datang di Siladu!
+      </h1>
+      <h5>Guest Version</h5>
+    </div>
+    <div class="row">
+      <div class="col">
+      </div>
+    </div>
+  </div>
+</body>
+
+</html> -->
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Halaman Utama</title>
+    <style>
+      h1{
+        font-weight: 700;
+      }
+    
+          /*tentang kami*/
+          .tentang-kami{
+            margin-top:90px;
+          }
+          .tentang-kami .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+
+      .visi-misi{
+        margin-top: 100px;
+      }
+      .col.visi , .col.misi{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        border-radius: 36px;
+    padding: 20px;
+      }
+
+      .visi-misi .judul{
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    margin-bottom: 20px;
+      }
+
+      .visi-misi .row{
+        gap: 30px;
+      }
+        @media screen and (max-width: 991px) {
+          .container{
+            max-width:900px;
+            margin-left:30px;
+            margin-right:30px;
+          }
+       
+        }
+  
+        @media screen and (max-width: 776px) {
+     
+
+          .container{
+          margin:0;
+          max-width: none;
+        }
+        .tentang-kami{
+          text-align: center;
+        }
+      .halaman-utama .row, .visi-misi .row{
+        display:flex;
+        flex-direction:column;
+        text-align:center;
+      }
+      .visi-misi{
+        margin-left:30px;
+            margin-right:30px;
+      }
+      .col-4{
+        width: 100%;
+      }
+      .col-8{
+        width: 90%;
+        margin: auto;
+      }
+  
+    
+     
+       
+      }
+    </style>
+  </head>
+  
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'tentang-kami')}"></nav>
+    <div class="container">
+      
+      <div class="tentang-kami">
+        <div class="row">
+          <div class="col-4">
+            <h1 style=" padding-top: 50px; padding-bottom:30px">TENTANG<span> KAMI</span></h1>
+          </div>
+          <div class="col-8" style="background-color: var(--primary-color); border-radius:24px; height: auto">
+            <p style="padding:20px; color: white">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+              incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus 
+              viverra adipiscing at. Suspendisse potenti nullam ac tortor vitae purus 
+              faucibus ornare. Gravida in fermentum et sollicitudin ac orci phasellus 
+              egestas. In aliquam sem fringilla ut morbi tincidunt augue interdum velit. 
+              Feugiat vivamus at augue eget arcu. Ornare arcu dui vivamus arcu felis bibendum ut. 
+              Augue mauris augue neque gravida in fermentum et sollicitudin. Viverra vitae congue 
+              eu consequat ac. Sed libero enim sed faucibus. Enim nulla aliquet porttitor lacus luctus.
+  
+              Dolor morbi non arcu risus. Scelerisque eleifend donec pretium vulputate sapien nec. 
+              Nunc pulvinar sapien et ligula ullamcorper malesuada. Orci nulla pellentesque dignissim 
+              enim sit amet venenatis urna. Purus sit amet volutpat consequat mauris nunc. Enim sed 
+              faucibus turpis in eu mi bibendum neque. Lectus sit amet est placerat in egestas erat. 
+              Egestas dui id ornare arcu odio. Mi in nulla posuere sollicitudin aliquam ultrices sagittis. 
+              Enim ut sem viverra aliquet eget sit amet tellus. A diam sollicitudin tempor id eu. Ac ut </p>
+          </div>
+        </div>
+      </div>
+      <div class="visi-misi">
+        <div class="row">
+          <div class="col visi">
+            <div class="judul">
+              <h1>Visi</h1>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+              incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus 
+              viverra adipiscing at. Suspendisse potenti nullam ac tortor vitae purus 
+              faucibus ornare. Gravida in fermentum et sollicitudin ac orci phasellus 
+              egestas. In aliquam sem fringilla ut morbi tincidunt augue interdum velit.</p>
+          </div>
+          <div class="col misi">
+            <div class="judul">
+              <h1 style="color: var(--primary-color);">Misi</h1>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+              incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus 
+              viverra adipiscing at. Suspendisse potenti nullam ac tortor vitae purus 
+              faucibus ornare. Gravida in fermentum et sollicitudin ac orci phasellus 
+              egestas. In aliquam sem fringilla ut morbi tincidunt augue interdum velit.</p>
+          </div>
+        </div>
+      </div>
+      
+      
+        
+    </div>
+    <footer
+        th:replace="~{fragments/footer}"
+      ></footer>
+  </body>
+  
+  </html>

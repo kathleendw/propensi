@@ -1,0 +1,348 @@
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />  
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Paket Layanan</title>
+    <style>
+        .dashboard-layanan, .dashboard-training, .dashboard-event{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px 30px 20px 30px;
+            border-radius: 24px;
+            margin-top:30px
+        }
+          .card-list{
+            display: flex;
+            gap:20px;
+        }
+        .card-list-2{
+            display: flex;
+            gap:20px;
+            width: 25%; flex-direction: column;
+        }
+        .card{
+            width: 25%;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            background-color: #c6d7ce;
+            border: none;
+        }
+        .text-img{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+        .card-img{
+            width:auto
+        }
+        .card-text p, .card-text h3 {
+            font-weight: 700;
+        }
+        .card-text h3 {
+            color: var(--primary-color);
+        }
+        .selengkapnya{
+            display: flex;
+            justify-content: flex-end;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-top: 20px;
+        }
+        .pie-chart{
+            width: 75%;
+            background-color: #C6D7CE;
+            border-radius: 24px;
+        }
+        .line-chart{
+            width: 75%;
+            background-color: #C6D7CE;
+            border-radius: 24px;
+        }
+        .judul-chart{
+            padding: 30px;
+            font-weight: 700;
+        }
+        .judul-line-chart{
+            padding-top: 20px;
+            padding-left: 25px;
+            font-weight: 700;
+            
+        }
+        .training-list{
+            display: flex;
+            gap: 20px;
+        }
+        table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+            background-color: unset;
+        }
+        table.dataTable.display tbody tr.odd>.sorting_1, table.dataTable.order-column.stripe tbody tr.odd>.sorting_1{
+            background-color: unset;
+        }
+        table.dataTable.display tbody tr.even>.sorting_1, table.dataTable.order-column.stripe tbody tr.even>.sorting_1 {
+            background-color: unset;
+        }
+        .dataTables_wrapper.no-footer .dataTables_scrollBody{
+            border-bottom: none;
+        }
+        table.dataTable thead .sorting_asc , table.dataTable thead .sorting ,table.dataTable thead .sorting {
+            border-bottom: none;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 24px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            background: #808080;
+            color: white !important;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            background: unset;
+            color: black !important;
+            border: none;
+        }
+        @media screen and (max-width: 992px) {
+            .card-list{
+                flex-direction: column;
+            }
+            .card{
+                width: 100%;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .training-list{
+                flex-direction: column;
+            }
+            .pie-chart, .card-list-2{
+                width: 100%;
+            }
+        }
+    </style>
+  </head>
+  <body>
+   
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    
+
+ 
+    <div class="container">
+        <div class="dashboard-layanan">
+            <h3 style="margin-bottom: 20px;" class="fw-bold">Dashboard Layanan</h3>
+            <div class="card-list">
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${jumlahLayanan}"></h3>
+                            <p>Paket Layanan</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/box-solid.svg" style="width: 25px" alt="pesanan">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${jumlahPesanan}"></h3>
+                            <p>Pesanan</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/rectangle-list-solid.svg" style="width: 30px" alt="pesanan">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${jumlahPembeli}"></h3>
+                            <p>Pembeli</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/users-solid.svg" style="width:30px" alt="pesanan">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="'Rp' +${jumlahPenghasilanLayanan}"></h3>
+                            <p>Penghasilan</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/hand-holding-dollar-solid.svg" style="width:30px" alt="pesanan">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/dashboard/layanan}" class="selengkapnya"><p style="text-decoration: underline;">Lihat Selengkapnya</p></a>
+        </div>
+        <div class="dashboard-training">
+            <h3 style="margin-bottom: 20px;" class="fw-bold">Dashboard Training</h3>
+            <div class="training-list">
+                <div class="pie-chart">
+                    <p class="judul-chart">Rating Training</p>
+                    <div class="tableRating" style="padding: 30px;">
+                        <table id="tableIDRating" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Paket Layanan</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, iterationStatus :${listTraining}">
+                                    <td>
+                                        <p class="table-text" th:text="${iterationStatus.count}"></p>
+                                    </td>
+                                    <td>
+                                        <p class="table-text" th:text="${item.key}"></p>
+                                    </td>
+                                    <td>
+                                        <p class="table-text" th:text="${item.value}"></p>
+                                    </td>
+                                
+                                </tr>
+                
+                            </tbody>
+                        </table>
+                        </div>
+                </div>
+                <div class="card-list-2" >
+                    <div class="card"  style="width: 100%;">
+                        <div class="text-img">
+                            <div class="card-text">
+                                <h3 th:text="${jumlahTraining}"></h3>
+                                <p>Training</p>
+                            </div>
+                            <div class="card-img">
+                                <img src="/images/box-solid.svg" style="width: 25px" alt="pesanan">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card"  style="width: 100%;">
+                        <div class="text-img">
+                            <div class="card-text">
+                                <h3 th:text="${jumlahPeserta}"></h3>
+                                <p>Peserta</p>
+                            </div>
+                            <div class="card-img">
+                                <img src="/images/users-solid.svg" style="width:30px" alt="pesanan">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card"  style="width: 100%;">
+                        <div class="text-img">
+                            <div class="card-text">
+                                <h3 th:text="'Rp' +${jumlahPenghasilanTraining}"></h3>
+                                <p>Penghasilan</p>
+                            </div>
+                            <div class="card-img">
+                                <img src="/images/hand-holding-dollar-solid.svg" style="width:30px" alt="pesanan">
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/dashboard/training}" class="selengkapnya"><p style="text-decoration: underline;">Lihat Selengkapnya</p></a>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-event">
+            <h3 style="margin-bottom: 20px;" class="fw-bold">Dashboard Event</h3>
+            <div class="training-list">
+                
+                <div class="card-list-2" >
+                    <div class="card"  style="width: 100%;">
+                        <div class="text-img">
+                            <div class="card-text">
+                                <h3 th:text="${jumlahPesananEvent}"></h3>
+                                <p>Jumlah Pesanan</p>
+                            </div>
+                            <div class="card-img">
+                                <img src="/images/box-solid.svg" style="width:30px" alt="pesanan">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card"  style="width: 100%;">
+                        <div class="text-img">
+                            <div class="card-text">
+                                <h3 th:text="'Rp' +${jumlahPenghasilanEvent}"></h3>
+                                <p>Penghasilan</p>
+                            </div>
+                            <div class="card-img">
+                                <img src="/images/hand-holding-dollar-solid.svg" style="width:30px" alt="pesanan">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-chart">
+                    <p class="judul-line-chart">Total Pendapatan 2024</p>
+                    <div class="row justify-content-center m-2">
+                        <canvas id="chartLine" style="max-height: 300px"></canvas>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/dashboard/event}" class="selengkapnya"><p style="text-decoration: underline;">Lihat Selengkapnya</p></a>
+        </div>
+  
+    </div>
+    <footer
+      th:replace="~{fragments/footer}"
+    ></footer>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script>
+       
+           $(document).ready(function () {
+               $('#tableIDRating').DataTable({
+                   "lengthMenu": [5, 10, 20],
+                   "scrollX": true
+               });
+           });
+    </script>
+    <script th:inline="javascript">
+       
+        var Utils = {
+            months: function(options) {
+                // Implement logic to generate months based on options
+                // This is just a placeholder, you can replace it with your actual logic
+                var months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+                return months;
+            }
+        };
+        const ctxLine = document.getElementById('chartLine');
+        var listLine = [[${listLine}]];
+        console.log(listLine)
+        
+        var labelsline = Utils.months({count: 12});
+        console.log(labelsline)
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: labelsline,
+                datasets: [{
+                    label: 'Jumlah Pendapatan',
+                    data: listLine,
+                    fill: false,
+                    borderColor: 'rgb(66, 122, 91)',
+                    tension: 0.1
+                }]
+            },
+        options: {
+            plugins: {
+                legend: {
+                    display: false // Set display to false to hide the legend
+                }
+            }
+        }
+        });
+    </script>
+</body>
+
+</html>

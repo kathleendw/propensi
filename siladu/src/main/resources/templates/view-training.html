@@ -1,0 +1,289 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Detail Training</title>
+    <style>
+        .video {
+            display: block;
+            margin: auto;
+            width: 560px;
+            height: 315px;
+        }
+        .video-locked {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 560px;
+            height: 315px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .lock {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+        }
+        .harga-container .row{
+            text-align: center;
+            gap:60px;
+            margin:20px;
+            margin-top:50px;
+        }
+        .harga-container .col.regular{
+            border: 1px solid var(--primary-color);
+            border-radius: 24px;
+            padding: 20px;
+            color: var(--primary-color);   
+        }
+        .harga-container .col.premium{
+            background-color: #A9D4BC;
+            border-radius: 24px;
+            padding: 20px;
+            color: #175231;
+        }
+        .btn{
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: 600;
+            padding-top: 12px;
+            margin-bottom: 30px
+        }
+        .btn:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            color:white;
+        }
+        .btn-edit:hover{
+            color:var(--black)
+        }
+        .btn-delete:hover{
+            color: white;
+            background-color: #C11D1D;
+            opacity: 80%;
+        }
+        .button{
+            display:flex;
+            justify-content: center;
+            gap:40px;
+            margin-top:40px;
+        }
+        .btn-edit{
+            background-color: #A9D4BC;
+            color: var(--black);
+            border-radius: 24px;
+            padding: 20px 30px 10px;
+        }
+        .btn-delete{
+            border: 2px solid #C11D1D;
+            opacity: 80%;
+            background-color:white;
+            color: #C11D1D;
+            border-radius: 24px;
+            padding: 20px 20px 12px 20px;
+        }
+        .edit img, .delete img{
+            margin-left: 5px;
+            width:20px;
+        }
+        .btn-delete:hover .delete img {
+            filter: brightness(0) invert(1);
+        }
+        .edit , .delete{
+            display: flex;
+            gap: 15px;
+            height: calc(100% - 10px);
+            align-items: center;
+        }
+        .edit p , .delete p{
+            margin-bottom: 0;
+        }
+        .btn-secondary{
+            border: 2px solid var(--primary-color);
+            background-color:white;
+            color: var(--primary-color);
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: #A9D4BC;
+            color: var(--primary-color);
+        }
+        .item{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        @media screen and (max-width: 776px) {
+            .video {
+                height: 177px;
+                width: 315px;
+            }
+            .video-locked {
+                height: 177px;
+                width: 315px;
+            }
+        }
+    </style>
+  </head>
+
+  <body>
+    <script>
+        $(document).ready(function(){
+             $('#failAlert .close').on('click', function(){
+                 $(this).closest('.alert').alert('close');
+                 removeMessageFromUrl('errorMessage='); // Remove success message from URL
+             });
+         });
+         // Function to remove the success message parameter from the URL
+         function removeMessageFromUrl(message) {
+             var url = window.location.href;
+             var urlParts = url.split('?');
+     
+             // Check if URL contains query parameters
+             if (urlParts.length > 1) {
+                 var baseUrl = urlParts[0];
+                 var queryParams = urlParts[1].split('&');
+     
+                 // Filter out successMessage parameter
+                 var filteredParams = queryParams.filter(function(param) {
+                     return !param.startsWith(message);
+                 });
+     
+                 // Reconstruct URL without successMessage parameter
+                 var newUrl = baseUrl + '?' + filteredParams.join('&');
+                 
+                 // Replace current URL with new URL
+                 window.history.replaceState({}, document.title, newUrl);
+             }
+         }
+    </script>
+     
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    <div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+        <strong>Gagal!</strong><span th:text="${errorMessage}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    </div>
+        <div class="container">
+            <div class="text-center pt-5">
+                <h1 class="fw-bold" th:text="${training.judulTraining}"></h1>
+                <br>
+                <p style="margin-bottom: 30px;" th:text="'Oleh: ' + ${training.pengajarTraining}"></p>
+            </div>
+            <div style="position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM'}">
+                <div style="position: relative;">
+                    <iframe style="width: 560px; height: 315px;" class="video" th:src="@{'https://www.youtube.com/embed/' + ${training.videoTraining}}" frameborder="0" allowfullscreen></iframe>
+                    <div class="video-locked"></div>
+                    <img class="lock" src="/images/lock-solid.svg">
+                </div>
+            </div>         
+            <iframe th:if="${userRole == 'ADMIN_LAYANAN'}" class="video" th:src="@{'https://www.youtube.com/embed/' + ${training.videoTraining}}" frameborder="0" allowfullscreen></iframe>          
+            <div class="text-center pt-5">
+                <p th:text="${training.deskripsiTraining}"></p>
+            </div>
+            <div class="harga-container" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'ADMIN_LAYANAN'}">
+                <div class="row">
+                    <div class="col regular">
+                        <h4 style="height: 50%;" class="fw-bold">Basic</h4>
+                        <h2 class="fw-bold" th:text="'Rp'+${harga}"></h2>
+                    </div>
+                    <a class="card-link col premium" th:href="@{/pilih-member}">
+                        <h4 class="fw-bold">Premium</h4>
+                        <p style="text-decoration: line-through;" th:text="'Rp'+${harga}"></p>
+                        <h2 class="fw-bold"th:text="'Rp'+${hargaDiskon}"></h2>
+                    </a>
+                </div>
+            </div>
+            <div class="harga-container" th:if="${userRole == 'MEMBER_PREMIUM'}">
+                <div class="row">
+                    <div style="border: 2px solid var(--primary-color);" class="col regular">
+                        <div class="item">
+                            <h4 class="fw-bold">Harga</h4>
+                            <h2 class="fw-bold"th:text="'Rp'+${hargaDiskon}"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button" style="text-align: center;" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM'}">
+                <a href="#" class="btn btn-edit" style="padding:12px; color: white; background-color: var(--primary-color);" data-toggle="modal" data-target="#confirmPesanModal">
+                    <div class="pesan">
+                        <p>Daftar</p>
+                    </div>
+                </a>
+                <!-- Modal -->
+                <div class="modal fade" id="confirmPesanModal" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pendaftaran</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        Apakah Anda yakin ingin mendaftar pada training ini?
+                        </div>
+                        <div class="modal-footer" style="justify-content: center;">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                            <form th:action="@{/training/{idTraining}/daftar(idTraining=${training.idTraining})}"
+                            th:object="${pesananDTO}"
+                            method="POST">
+                                <button type="submit" class="btn btn-edit" style="padding:12px; color: white; background-color: var(--primary-color);">
+                                    <div class="pesan">
+                                        <p>Daftar</p>
+                                    </div>
+                                </button>
+                            </form>     
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button" style="text-align: center;"  th:if="${userRole == 'ADMIN_LAYANAN'}">
+                <a href="#" class="btn btn-edit" th:href="@{/training/{idTraining}/update(idTraining=${training.idTraining})}">
+                    <div class="edit">
+                        <img src="/images/pen-solid.svg" alt="edit">
+                        <p> Ubah</p>
+                    </div>
+                </a>
+                <a href="#" class="btn btn-delete" data-toggle="modal" data-target="#confirmDeleteModal">
+                    <div class="delete">
+                        <img src="/images/trash-solid.svg" alt="delete">
+                        <p> Hapus</p>
+                    </div>
+                </a>
+                   <!-- Modal -->
+                   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        Apakah Anda yakin ingin menghapus training ini? Aksi ini tidak dapat diulang
+                        </div>
+                        <div class="modal-footer" style="justify-content: center;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                        <a th:href="@{/training/{idTraining}/delete(idTraining=${training.idTraining})}" class="btn btn-danger" id="deleteLink">Hapus</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+         
+        </div>
+    </div>
+   
+</body>
+
+</html>

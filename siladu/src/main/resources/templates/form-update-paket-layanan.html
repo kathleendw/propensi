@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Paket Layanan</title>
+    <style>
+      .form-container {
+        background-color: white;
+        border-radius: 24px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        max-width:700px;
+        margin: auto;
+        margin-top: 20px;
+        height: auto;
+      }
+      .row{
+        height: 100%;
+      }
+      .col-4{
+        display:flex;
+        align-items: flex-end;
+        background-image: linear-gradient(45deg, #427A5B, #F5F6F7);
+        border-radius:24px 24px 0;
+      }
+      .col-8{
+        padding: 25px 45px 25px 25px;
+        margin:auto;
+      }
+      .col-4 h3{
+        padding: 25px;
+        color: white;
+        font-weight: 700;
+      }
+      .label{
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .btn{
+        background-color: var(--primary-color);
+        width: 150px;
+        height: 50px;
+    border-radius: 24px;
+    color:white;
+    font-weight: 600;
+      }
+      .btn-submit{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+      }
+      label{
+        font-weight: 600;
+      }
+      .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+      .btn-secondary{
+            border: 2px solid var(--primary-color);
+            background-color:white;
+            color: var(--primary-color);
+            padding:11px;
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: #A9D4BC;
+            color: var(--primary-color);
+        }
+ 
+      @media screen and (max-width: 776px) {
+        .form-container{
+          height:auto;
+          margin:60px;
+        }
+        .form-container .row{
+          display: flex;
+          flex-direction: column;
+          padding: 0 10px;
+        }
+        .form-container .col-4{
+          width:100%;
+          height: 200px;
+        }
+        .form-container .col-8{
+          width:100%;
+        }
+      }
+      @media screen and (max-width: 498px) {
+        .tombol{
+          flex-direction: column;
+        }
+        .btn-batal{
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+   
+    <div class="form-container">
+      <div class="row">
+        <div class="col-4"><h3>Form Ubah Paket Layanan</h3></div>
+        <div class="col-8">
+          <form th:action="@{/paketlayanan/ubah}" th:object="${paketLayananDTO}" method="POST">
+            <input class="form-control" type="hidden" th:field="*{id}" />
+            <div class="form-group">
+              <label for="namaPaketLayanan">Nama Paket Layanan</label>
+              <input class="form-control" type="text" th:field="*{namaPaket}" />
+            </div>
+            <div class="form-group">
+              <label for="jenisLayanan">Jenis Layanan</label>
+              <select class="form-control" name="layanan" th:field="*{layanan}">
+                  
+                <option th:each="tipe : ${listNamaLayanan}" th:value="${tipe.key}" th:text="${tipe.value}">
+                </option>
+            </select>
+            </div>
+            <div class="form-group">
+              <label for="harga">Harga</label>
+              <input required class="form-control" type="number" th:field="*{hargaPaket}" />
+            </div>
+            <div class="form-group">
+              <label for="deskripsi">Deskripsi</label>
+              <textarea
+                required
+                id="deskripsi"
+                class="form-control"
+                type="text"
+                th:field="*{deskripsi}"
+              ></textarea>
+              <div id="alertMessageDeskripsi" style="display: none; color: red;">Deskripsi melebihi 255 karakter!</div>
+            </div>
+            <div class="form-group">
+              <label for="manfaat">Manfaat</label>
+              <textarea required id="manfaat" th:field="*{manfaat}" class="form-control" type="text" rows="4"></textarea>
+              <div id="alertMessageManfaat" style="display: none; color: red;">Manfaat melebihi 255 karakter!</div>
+          </div>
+          <div class="tombol" style="display: flex; justify-content:center; gap: 20px">
+            <div class="btn-batal">
+              <a type="button"  class="btn btn-secondary btn-md" href="javascript:history.back()">Batal</a>
+           </div>
+            <div class="btn-submit">
+            <button type="submit" class="btn">
+              Ubah
+            </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Get the textarea element
+      const deskripsi = document.getElementById('deskripsi');
+      const manfaat = document.getElementById('manfaat');
+      // Get the alert message element
+      const alertMessageDeskripsi = document.getElementById('alertMessageDeskripsi');
+      const alertMessageManfaat = document.getElementById('alertMessageManfaat');
+
+      // Add event listener to monitor input
+      deskripsi.addEventListener('input', function() {
+          // Check if the input length exceeds the limit
+          if (this.value.length > 255) {
+              // Display the alert message
+              alertMessageDeskripsi.style.display = 'block';
+          } else {
+              // Hide the alert message
+              alertMessageDeskripsi.style.display = 'none';
+          }
+          checkAlertMessages();
+      });
+      // Add event listener to monitor input
+      manfaat.addEventListener('input', function() {
+          // Check if the input length exceeds the limit
+          if (this.value.length > 255) {
+              // Display the alert message
+              alertMessageManfaat.style.display = 'block';
+          } else {
+              // Hide the alert message
+              alertMessageManfaat.style.display = 'none';
+          }
+          checkAlertMessages();
+      });
+      function checkAlertMessages() {
+          // Get the submit button
+          const submitButton = document.querySelector('button[type="submit"]');
+          // Check if any alert message is displayed
+          if (alertMessageDeskripsi.style.display === 'block' || alertMessageManfaat.style.display === 'block') {
+              // Disable the submit button
+              submitButton.disabled = true;
+          } else {
+              // Enable the submit button
+              submitButton.disabled = false;
+          }
+      }
+    
+  </script>
+  </body>
+</html>

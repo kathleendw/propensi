@@ -1,0 +1,185 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Detail Pesanan Belum Bayar</title>
+    <style>
+        .container{
+            margin-top: 50px;
+        }
+        .top{
+            display: flex;
+            gap:50px;
+            margin-bottom: 60px;
+        }
+        .box{
+            width: 40px;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        .container h4{
+            color: var(--primary-color);
+        }
+        .container h3,.container p{
+            color: var(--black);
+        }
+        .container p{
+            font-weight: 500;
+        }
+      
+        .detail-product-card, .tagihan-card, .bukti-pembayaran-card{
+            border-radius: 36px;
+             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+             padding: 30px;
+             margin-bottom: 40px;
+        }
+        .detail-produk h4, .tagihan h4, .bukti-pembayaran h4{
+             margin-bottom: 20px;
+        }
+        .item{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .info{
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        }
+        .tombol{
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .container .btn{
+            border-radius: 36px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 10px 30px;
+        }
+
+    </style>
+  </head>
+
+  <body>
+ 
+     
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    <div class="container">
+        <div class="top">
+            <div class="box">
+                <a type="button" th:href="@{/pesanan(activeSection='Diproses')}"><img class="img1" src="/images/arrow-left-solid.svg" alt="img1" style="width: 20px"></a>
+            </div>
+            <h3 class="fw-bold">Pemesananmu Sedang Diproses</h3>
+        </div>
+        <div class="detail-produk" th:if="${pesanan.jenisPesanan == 'LAYANAN'}">
+            <h4 class="fw-bold">Detail Produk</h4>
+            <div class="detail-product-card">
+                <a th:href="@{/paketlayanan/{id}(id=${pesanan.paketLayanan.id})}">
+                    <div class="item">
+                        <p>Nama Layanan</p>
+                        <p class="fw-bold" th:text="${pesanan.paketLayanan.layanan.namaLayanan}"></p>
+                    </div>
+                    <div class="item">
+                        <p>Nama Paket Layanan</p>
+                        <p class="fw-bold" th:text="${pesanan.paketLayanan.namaPaket}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="detail-produk" th:if="${pesanan.jenisPesanan == 'TRAINING'}">
+            <h4 class="fw-bold">Detail Produk</h4>
+            <div class="detail-product-card">
+                <a th:href="@{/training/{idTraining}(idTraining=${pesanan.training.idTraining})}">
+                    <div class="item">
+                        <p>Judul Training</p>
+                        <p class="fw-bold" th:text="${pesanan.training.judulTraining}"></p>
+                    </div>
+                    <div class="item">
+                        <p>Pengajar</p>
+                        <p class="fw-bold" th:text="${pesanan.training.pengajarTraining}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="detail-produk" th:if="${pesanan.jenisPesanan == 'EVENT'}">
+            <h4 class="fw-bold">Detail Produk</h4>
+            <div class="detail-product-card">
+                <a th:href="@{/event/{idEvent}(idTEvent=${pesanan.event.idEvent})}">
+                    <div class="item">
+                        <p>Nama Event</p>
+                        <p class="fw-bold" th:text="${pesanan.event.namaEvent}"></p>
+                    </div>
+                    <div class="item">
+                        <p>Nama Pembicara</p>
+                        <p class="fw-bold" th:text="${pesanan.event.namaPembicara}"></p>
+                    </div>
+                    <div class="item">
+                        <p>Jadwal Event</p>
+                        <p class="fw-bold" th:text="${pesanan.event.jadwalEvent}"></p>
+                    </div>
+                    <div class="item">
+                        <p>Durasi Event</p>
+                        <p class="fw-bold" th:text="${pesanan.event.durasiEvent}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="tagihan">
+            <h4 class="fw-bold">Tagihan</h4>
+            <div class="tagihan-card">
+                <div class="info">
+                    <div class="item">
+                        <p>Bank</p>
+                        <p class="fw-bold">BCA</p>
+                    </div>
+                    <div class="item">
+                        <p>Nomor Rekening</p>
+                        <p class="fw-bold">8918283840</p>
+                    </div>
+                    <div class="item">
+                        <p>Nama Pemilik Rekening</p>
+                        <p class="fw-bold">Budi</p>
+                    </div>
+                </div>
+              
+                <div class="item" th:if="${pesanan.jenisPesanan == 'PREMIUM' and userRole == 'MEMBER_BASIC'}">
+                    <p class="fw-bold">Total Tagihan</p>
+                    <h4 class="fw-bold">Rp100.000</h4>
+                </div>
+                <div class="item" th:unless="${pesanan.jenisPesanan == 'PREMIUM'}">
+                    <p class="fw-bold">Total Tagihan</p>
+                    <h4 class="fw-bold" th:text="'Rp'+${hargaPesanan}"></h4>
+                </div>
+                <div class="item" th:if="${pesanan.jenisPesanan == 'PREMIUM' and userRole == 'MEMBER_BASIC'}">
+                    <p class="fw-bold">Total Tagihan</p>
+                    <h4 class="fw-bold">Rp100000</h4>
+                </div>
+            </div>
+        </div>
+        <div class="bukti-pembayaran">
+            <h4 class="fw-bold">Bukti Pembayaran</h4>
+            <div class="bukti-pembayaran-card">
+                <div class="item">
+                    <p>Metode Pembayaran</p>
+                    <p class="fw-bold" th:text="${pembayaran.metodePembayaran}"></p>
+                </div>
+                <div class="item">
+                    <p>Nomor Telepon</p>
+                    <p class="fw-bold" th:text="${pembayaran.nomorTelepon}"></p>
+                </div>
+                <div class="item">
+                    <p>Nama Pemilik E-Wallet / Rekening</p>
+                    <p class="fw-bold" th:text="${pembayaran.namaPemilik}"></p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+   
+</body>
+
+</html>

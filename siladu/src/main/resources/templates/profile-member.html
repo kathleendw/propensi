@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>SILADU</title>
+    <style>
+        .profile-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            text-align: center;
+            margin: auto;
+        }
+        h3 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        /*tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }*/
+        .button-container {
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .btn-premium {
+            background-color: #a0913c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-premium:hover {
+            background-color: #dad099;
+        }
+        .btn-package:hover {
+            background-color: #9dcab1;
+        }
+        .profile-role {
+            display: inline-block;
+            padding: 5px 10px; 
+            border-radius: 20px;
+        }
+        .basic {
+            background-color: #4c4f4c; 
+            color: white;
+        }
+        .premium {
+            background-color: #427A5B;
+            color: white;
+        }
+        .profile-info {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center;
+        }
+    
+        .round-button {
+            background-color: #A20A0A;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <br>
+    <br>
+    <div class="profile-container">  
+        
+        <h3 th:text="${user.name}"></h3>
+
+        <h6><p th:text="${user.email}"></p></h6>
+        <!--BASIC-->
+        <div th:if="${userRole == 'MEMBER_BASIC'}">
+            <h6 class="profile-role basic">Member Basic</h6>
+        </div>
+
+        <!--PREMIUM-->
+        <div th:if="${userRole == 'MEMBER_PREMIUM'}">
+            <h6 class="profile-role premium">Member Premium</h6>
+        </div>
+        
+        <!--error -->
+        <div th:if="${param.error}">
+            <div class="alert alert-danger"></div>
+            <br>
+        </div>
+        <div th:if="${param.successPremium}"> <!--connected to redirect in Page Controller-->
+            <div class="alert alert-info">Anda berhasil update menjadi member premium!</div>
+            <br>
+        </div>
+
+        <div th:if="${userRole == 'MEMBER_BASIC'}">
+
+            <div class="button-container">
+                <button type="button" class="btn btn-premium" onclick="confirmUpdatePremium()">Upgrade Menjadi Premium</button>    
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <button type="button" class="round-button" onclick="confirmDeleteAccount()">Hapus Akun</button> 
+    </div>
+    <script>
+        function confirmUpdatePremium() {
+            if (confirm("Apakah Anda ingin memperbarui member menjadi premium?")) {
+                // If user confirms, redirect to the update-member-premium page
+                window.location.href = '/update-member-premium';
+            }
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm("Apakah Anda ingin menghapus akun Anda?")) {
+                // If user confirms, redirect to the update-member-premium page
+                window.location.href = '/delete-account';
+            }
+        }
+    </script>
+</body>
+</html>

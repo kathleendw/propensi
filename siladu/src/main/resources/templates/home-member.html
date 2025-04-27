@@ -1,0 +1,811 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <style>
+        
+    </style>
+  <title>Home</title>
+</head>
+
+<body>
+  <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <div class="container text-center">
+    <div class="row pt-5 pb-2">
+      <div th:if="${param.success}">
+        <div class="alert alert-info">Anda berhasil daftar ke SILADU!</div>
+      </div>
+      <h1>
+        Selamat Datang di Siladu!
+      </h1>
+      <h5> Logged In Version </h5>
+      <p th:text="${email}"></p> 
+    </div>
+    <div class="row">
+      <div class="col">
+      </div>
+    </div>
+  </div>
+</body>
+
+</html> -->
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <style>
+        
+    </style>
+  <title>Home</title>
+</head>
+
+<body>
+  <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <div class="container text-center">
+    <div class="row pt-5 pb-2">
+      <h1>
+        Selamat Datang di Siladu!
+      </h1>
+      <h5>Guest Version</h5>
+    </div>
+    <div class="row">
+      <div class="col">
+      </div>
+    </div>
+  </div>
+</body>
+
+</html> -->
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+  <link rel="stylesheet" href="static/css/swiper-bundle-min.css">
+  <script src="static/js/swiper-bundle-min.js"></script>
+
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+
+  <title>Halaman Utama</title>
+  <style>
+    h1 {
+      font-weight: 700;
+      color: #1E1E1E;
+    }
+
+    .halaman-utama,
+    .layanan {
+      padding: 0 12px;
+      margin: 0 75px
+    }
+
+    /*halaman utama*/
+    .halaman-utama {
+      padding-top: 80px;
+
+    }
+
+    .halaman-utama .text {
+      margin-left: 50px;
+    }
+
+    .images img {
+      border-radius: 24px;
+      opacity: 50%
+    }
+
+    span {
+      color: var(--primary-color)
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      width: 175px;
+      height: 50px;
+      border-radius: 36px;
+      color: white !important;
+      font-weight: 600;
+      padding-top: 12px;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      color: white;
+    }
+
+    /*lyanan*/
+    .layanan {
+      padding-top: 120px;
+      text-align: center;
+    }
+
+    .card-carousel {
+      margin-top: 30px;
+      overflow-y: hidden;
+      /* Allow vertical scrolling */
+      height: 250px;
+      overflow-x: hidden;
+      position: relative;
+      padding: 0 10px;
+      /* Set the desired height for the carousel */
+    }
+
+    .card-deck {
+      display: block;
+      /* Display cards as blocks */
+    }
+
+    .card.carousel {
+      width: 96%;
+      /* Adjust card width as needed */
+
+      height: 250px;
+      /* Adjust card margin as needed */
+      background-color: var(--primary-color);
+      color: white;
+      padding: 40px 70px 40px 40px;
+      border-radius: 24px;
+      text-align: left;
+      scroll-behavior: smooth;
+    }
+
+    .card.carousel:hover {
+      border-radius: 24px;
+      border: 4px solid #A9D4BC;
+      transition: transform 0.3s ease;
+      /* Add smooth transition effect */
+    }
+
+    .scroll-btn {
+      top: 0;
+      width: 100%;
+      height: 40px;
+      background-color: transparent;
+      border: none;
+      color: black;
+      font-size: 24px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Indicator styles */
+    .indicators {
+      position: absolute;
+      top: 30%;
+      right: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .indicator {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: #9E9E9E;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .indicator.active {
+      background-color: white;
+    }
+
+
+    #scrollUp {
+      position: absolute;
+      top: 8%;
+      right: 38px;
+      width: 40px;
+    }
+
+    #scrollDown {
+      position: absolute;
+      top: 76%;
+      right: 38px;
+      width: 40px;
+    }
+
+    /*berita*/
+    .berita {
+      padding-top: 120px;
+      text-align: center;
+    }
+
+    /*image news*/
+    .card-img-top {
+      width: 100%;
+      height: auto;
+      border-radius: 24px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+
+    /*training*/
+    .training {
+      height: 30vw;
+      border-bottom: 2px solid black;
+    }
+
+    .training-box {
+      padding: 25px;
+      margin: 12vw 10vw 0 10vw;
+      height: 100%;
+      border: 2px solid;
+      border-radius: 24px 24px 0 0;
+      border-bottom: 0px;
+    }
+
+    .training-box h2 {
+      font-weight: 700;
+      text-align: center;
+      font-size: 2.8vw;
+    }
+
+    .training-judul {
+      background-color: #A9D4BC;
+      border-radius: 24px;
+      height: 8vw;
+      width: 80%;
+      margin-top: 3vw;
+      display: flex;
+      justify-content: space-between;
+      padding: 25px;
+      align-items: center;
+    }
+
+    .tangan {
+      width: 20vw;
+    }
+
+    .training-box .col-3 {
+      overflow: hidden;
+    }
+
+    .training h5 {
+      font-size: 2vw;
+      margin: 0;
+    }
+
+    .training p {
+      font-size: 1vw;
+      margin-top: 1vw;
+      margin-bottom: 0;
+    }
+
+    .event,
+    .daftar {
+      margin-top: 100px;
+      text-align: center;
+    }
+
+    .event-box img {
+      width: 30vw;
+    }
+
+    .event-box {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 50px;
+    }
+
+    .event-one,
+    .event-two {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 24px;
+    }
+
+    .event-box p {
+      margin-top: 1rem;
+      font-weight: 600;
+      font-size: 2vw;
+    }
+
+    .daftar .button-daftar {
+      padding: 1vw 4vw;
+      border: 3px solid var(--primary-color);
+      background-color: white;
+      border-radius: 100px;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    @media screen and (max-width: 1200px) {
+      .images .img1 {
+        width: 200px !important;
+      }
+
+      .images .img2 {
+        width: 180px !important;
+      }
+    }
+
+    @media screen and (max-width: 991px) {
+      .container {
+        max-width: 900px;
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+
+      .images .img1 {
+        width: 180px !important;
+      }
+
+      .images .img2 {
+        width: 165px !important;
+      }
+    }
+
+    @media screen and (max-width: 843px) {
+      .berita .button {
+        font-size: 1.5vw;
+      }
+    }
+
+    @media screen and (max-width: 776px) {
+
+      .container {
+        margin: 0;
+      }
+
+      .halaman-utama .text {
+        margin-left: 0;
+      }
+
+      .images .img1 {
+        margin-bottom: 0 !important;
+      }
+
+      .halaman-utama .row {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .text-halaman {
+        width: 100% !important;
+      }
+
+      .text {
+        margin-bottom: 50px;
+      }
+
+      .img2 {
+        display: none;
+      }
+
+      .col-4 {
+        width: 100%;
+      }
+
+      .col-8 {
+        width: 90%;
+        margin: auto;
+      }
+
+      .berita {
+        text-align: center;
+      }
+
+      .training h2 {
+        font-size: 2.5vw;
+      }
+
+      .training h5 {
+        font-size: 1.5vw;
+      }
+
+
+    }
+
+    @media screen and (max-width: 1063px) {
+      .training-box h2 {
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .training-judul {
+        height: 6vw;
+        padding: 20px;
+      }
+    }
+
+    @media screen and (max-width: 575px) {
+      .layanan .col-1 {
+        margin-left: 0;
+      }
+
+      .card.carousel {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .card.carousel p {
+        display: none;
+      }
+
+      .card.carousel h5 {
+        font-size: x-large;
+        font-weight: 700;
+      }
+
+      .training-judul {
+        height: 5vw;
+        padding: 2vw;
+      }
+
+      .berita .button {
+        font-size: 2vw;
+      }
+
+      .berita-container {
+        padding: 30px 50px !important;
+      }
+    }
+
+    @media screen and (max-width: 383px) {
+      .berita .btn {
+        font-size: 12px;
+      }
+
+      .event-box {
+        flex-direction: column;
+        margin: 50px;
+      }
+
+      .event-box img {
+        width: 100%;
+      }
+
+      .event-box p {
+        font-size: 4vw;
+      }
+    }
+
+    /* BERITA NEWS */
+    .carousel-inner {
+      padding: 1em;
+    }
+
+    .card {
+      margin: 0 0.5em;
+      box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
+      border: none;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      background-color: #427A5B;
+      width: 6vh;
+      height: 6vh;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    @media (min-width: 768px) {
+      .carousel-item {
+        margin-right: 0;
+        flex: 0 0 33.333333%;
+        display: block;
+      }
+
+      .carousel-inner {
+        display: flex;
+      }
+    }
+
+    .card .img-wrapper {
+      max-width: 100%;
+      height: 23vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card img {
+      max-height: 100%;
+    }
+
+    @media (max-width: 767px) {
+      .card .img-wrapper {
+        height: 17em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+  <div class="main">
+    <div class="halaman-utama">
+      <div class="row">
+        <div class="col">
+          <div class="text">
+            <p style="font-size: 20px; font-weight:500">Butuh teman Usaha?</p>
+            <h1 class="text-halaman" style=" width:300px"><span>SILADU </span>Siap Bantu UMKM Menjadi Lebih Baik</h1>
+            <a class="btn" th:href="@{/tentang-kami}">Mengenai Kami</a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="images">
+            <div class="row">
+              <div class="col">
+                <img class="img1" src="/images/photo.jpeg" alt="img1" style="width: 250px; margin-bottom:10px">
+                <img class="img1" src="/images/annual-report.jpg" alt="img2" style="width: 250px">
+              </div>
+              <div class="col">
+                <img class="img2" src="/images/photo2.jpeg" alt="img3" style="width:230px">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layanan">
+      <p>Kami menawarkan</p>
+      <h1>Layanan</h1>
+      <div class='row'>
+        <div style="padding:0" th:if="${not #lists.isEmpty(listLayanan)}">
+
+          <div class="card-carousel" id="cardCarousel">
+            <div class="card-deck">
+
+              <div th:each="item, iterStat : ${listLayanan}">
+
+                <a th:href="@{/layanan/{layananId}(layananId=${item.idLayanan})}">
+                  <div class="card carousel">
+                    <h4 style="padding:0;" th:text="${item.namaLayanan}" class="card-title">Card title</h4>
+                    <p th:text="${item.deskripsiSingkat}"></p>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="btn-container">
+              <button class="scroll-btn" id="scrollUp"><img src="/images/circle-chevron-up-solid.svg"></button>
+              <!-- Indicator container -->
+              <div class="indicators">
+                <!-- Indicators will be dynamically generated here -->
+              </div>
+              <button class="scroll-btn" id="scrollDown"><img src="/images/circle-chevron-down-solid.svg"></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="berita">
+      <h1>Jangan Ketinggalan Berita Terkini</h1>
+      <div class="news-container"
+        style="background-color: #A9D4BC; display: flex; flex-wrap: wrap; justify-content: center; gap: 0px; height: auto; text-align: center; padding:30px 100px; margin-top:50px; overflow: hidden;">
+        <div th:if="${not #lists.isEmpty(newsList)}">
+          <!-- Carousel -->
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active" th:each="news, iterStat : ${newsList}">
+                <div class="card"
+                  style="margin: 0 1em; box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18); border: none;  border-radius: 24px; overflow: hidden;">
+                  <div class="card-body">
+                    <div class="img-wrapper"
+                      style="max-width: 100%; height: 200px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                      <img class="card-img-top" th:src="'data:image/jpg;base64, ' + ${base64ImagesMap[news.idNews]}"
+                        alt="" style="max-height: 100%;">
+                    </div>
+                    <h4 class="card-title"
+                      style="color:var(--black); height:20%;font-weight: 500; margin:20px 10px 10px 10px"
+                      th:text="${news.judul}"></h4>
+                    <div class="button" style="text-align: center; padding-top: 10px;">
+                      <a style="color:var(--primary-color); font-weight: 300; text-decoration: underline !important;"
+                        th:href="@{'/news/' + ${news.idNews}}">
+                        Baca Selengkapnya
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+              data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+              data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="text-center" style="color:#ADB5BD" th:unless="${not #lists.isEmpty(newsList)}">
+        <p>Mohon Maaf,</p>
+        <p>Berita Belum Tersedia.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="training">
+    <div class="training-box">
+      <h2 style="margin-bottom: 0;">Ingin menambah pemahaman mengenai UMKM?</h2>
+      <div class="row">
+        <div class="col-9 training-link">
+          <div class="training-judul">
+            <h5 style="font-weight: 700;">Proses Izin Usaha</h5>
+            <img style="width:1vw" src="/images/chevron-right-solid.svg">
+          </div>
+          <p style="  color: #808080;">Oleh: Susi Susanti</p>
+          <p>Kursus ini bertujuan untuk mengedukasi UMKM mengenai proses izin usaha</p>
+        </div>
+        <div class="col-3">
+          <img class="tangan" src="/images/hand-with-a-pen.png">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="event">
+    <h1>Yuk, seru-seruan bareng!</h1>
+    <div class="event-box">
+      <div class="event-one">
+        <img src="/images/image.png">
+        <p>Jazz Goes To Campus</p>
+      </div>
+      <div class="event-two">
+        <p>Jazz Goes To Campus</p>
+        <img src="/images/image.png">
+      </div>
+    </div>
+    <div class="daftar">
+      <button type="button" class="button-daftar" onclick="window.location.href='/pilih-member';">Daftarkan saya!</button>
+    </div>
+  <footer
+      th:replace="~{fragments/footer}"
+    ></footer>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   <script>
+    document.getElementById('scrollUp').addEventListener('click', function() {
+    const cardCarousel = document.getElementById('cardCarousel');
+    
+            cardCarousel.scrollTop -= 250; 
+    });
+
+
+
+    var multipleCardCarousel = document.querySelector("#carouselExampleControls");
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      var carousel = new bootstrap.Carousel(multipleCardCarousel, {
+        interval: false,
+      });
+      var carouselWidth = $(".carousel-inner")[0].scrollWidth;
+      var cardWidth = $(".carousel-item").width();
+      var scrollPosition = 0;
+      $("#carouselExampleControls .carousel-control-next").on("click", function () {
+        if (scrollPosition < carouselWidth - cardWidth * 4) {
+          scrollPosition += cardWidth;
+          $("#carouselExampleControls .carousel-inner").animate(
+            { scrollLeft: scrollPosition },
+            600
+          );
+        }
+      });
+      $("#carouselExampleControls .carousel-control-prev").on("click", function () {
+        if (scrollPosition > 0) {
+          scrollPosition -= cardWidth;
+          $("#carouselExampleControls .carousel-inner").animate(
+            { scrollLeft: scrollPosition },
+            600
+          );
+        }
+      });
+    } else {
+      $(multipleCardCarousel).addClass("slide");
+    }
+
+    document.getElementById('scrollUp').addEventListener('click', function () {
+      const cardCarousel = document.getElementById('cardCarousel');
+
+      cardCarousel.scrollTop -= 250;
+    });
+
+    document.getElementById('scrollDown').addEventListener('click', function () {
+      const cardCarousel = document.getElementById('cardCarousel');
+      cardCarousel.scrollTop += 250;
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      const cardCarousel = document.getElementById("cardCarousel");
+      const indicatorsContainer = document.querySelector(".indicators");
+      const scrollUp = document.getElementById('scrollUp')
+      const scrollDown = document.getElementById('scrollDown')
+
+      // Create indicators based on the number of cards
+      const cards = cardCarousel.querySelectorAll(".card");
+      for (let i = 0; i < cards.length; i++) {
+        const indicator = document.createElement("span");
+        indicator.classList.add("indicator");
+        indicator.dataset.index = i; // Store the index as a data attribute
+        indicatorsContainer.appendChild(indicator);
+      }
+
+      // Set the first indicator as active initially
+      const indicators = indicatorsContainer.querySelectorAll(".indicator");
+      indicators[0].classList.add("active");
+
+      // Initialize translateY position
+      let translateY = 0;
+
+      // Update active indicator based on card position
+      function updateIndicators() {
+        const cardHeight = cardCarousel.offsetHeight;
+        const scrollPosition = cardCarousel.scrollTop;
+        const activeIndex = Math.floor(scrollPosition / cardHeight);
+
+        // Remove active class from all indicators
+        indicators.forEach((indicator) => indicator.classList.remove("active"));
+        // Add active class to the corresponding indicator
+        indicators[activeIndex].classList.add("active");
+
+        // Update translateY property of the indicators container
+        indicatorsContainer.style.transform = `translateY(${translateY}px)`;
+        scrollDown.style.transform = `translateY(${translateY}px)`;
+        scrollUp.style.transform = `translateY(${translateY}px)`;
+      }
+
+      // Call updateIndicators() initially and on carousel scroll
+      updateIndicators();
+      cardCarousel.addEventListener("scroll", updateIndicators);
+
+      // Add click event listener to indicators
+      indicators.forEach((indicator) => {
+        indicator.addEventListener("click", function () {
+          const index = parseInt(this.dataset.index);
+          const cardHeight = cardCarousel.offsetHeight;
+          // Scroll the carousel to the corresponding card
+          cardCarousel.scrollTop = index * cardHeight;
+          // Update active indicator
+          updateIndicators();
+        });
+      });
+
+      // Update translateY value based on scroll direction
+      cardCarousel.addEventListener("scroll", function () {
+        const cardHeight = cardCarousel.offsetHeight;
+        const scrollPosition = cardCarousel.scrollTop;
+        const activeIndex = Math.floor(scrollPosition / cardHeight);
+
+        // Calculate the new translateY value
+        translateY = activeIndex * cardHeight;
+
+        // Update the translateY property of the indicators container
+        indicatorsContainer.style.transform = `translateY(${translateY}px)`;
+        scrollDown.style.transform = `translateY(${translateY}px)`;
+        scrollUp.style.transform = `translateY(${translateY}px)`;
+      });
+    });
+
+
+  </script>
+</body>
+
+</html>

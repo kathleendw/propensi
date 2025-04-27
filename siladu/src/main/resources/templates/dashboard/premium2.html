@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Premium</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <style>
+        .search-dropdown {
+            padding: 10px 10px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+        .bar-chart {
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 25px;
+            /* Menengahkan secara horizontal */
+            max-width: 1080px;
+            /* width: 1000px; */
+            /* Menentukan lebar maksimum */
+            justify-content: center;
+        }
+
+        .pie-chart {
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 25px;
+            /* Menengahkan secara horizontal */
+            max-width: 1080px;
+            /* width: 1000px; */
+            /* Menentukan lebar maksimum */
+            justify-content: center;
+            display: flex;
+        }
+
+        .above {
+            width: 900px;
+            display: flex;
+            align-items: center;
+            /* Memposisikan tulisan di kiri atas */
+            justify-content: space-between;
+            flex-direction: column;
+            /* Mengatur posisi elemen di dalam .above menjadi vertical */
+        }
+
+        .dropdown-container {
+            align-self: flex-end;
+            /* Memposisikan dropdown di kanan atas chart */
+        }
+
+
+        .judul-chart {
+            padding: 15px;
+            margin-top: 20px;
+            font-weight: 700;
+            align-self: flex-start;
+            /* Menghilangkan margin atas dan bawah */
+        }
+
+
+        .bottom-dashboard {
+            display: inline;
+            align-items: stretch;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .upper-dashboard{
+            margin: 30px 0;
+        }
+        .card-list{
+            display: flex;
+            gap:20px;
+            justify-content: center;
+        }
+        .card{
+            width: 25%;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        .text-img{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+        .card-img{
+            width:auto
+        }
+        .card-text p, .card-text h3 {
+            font-weight: 700;
+        }
+        .card-text h3 {
+            color: var(--primary-color);
+        }
+        .bar-container {
+            width: 100%;
+            /* Mengisi lebar kontainer */
+            margin: 0 auto;
+            /* Menengahkan secara horizontal */
+
+        }
+
+        .income-display {
+            margin: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+
+            .card-list,
+            .bottom-dashboard {
+                flex-direction: column;
+            }
+
+            .card,
+            .rating,
+            .pie-chart {
+                width: 100%;
+            }
+
+            .judul-chart {
+                text-align: center;
+            }
+        }
+
+        @media screen and (max-width: 380px) {
+            .above {
+                flex-direction: column;
+            }
+
+            .dropdown-container {
+                margin: 0;
+                margin-bottom: 20px;
+            }
+
+            .container h1 {
+                text-align: center;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+
+    <h1 style="margin:50px; text-align: center;" class="fw-bold">Dashboard Member Premium</h1>
+    <div class="upper-dashboard">
+        <div class="card-list">
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="${totalPremiumMembers}"></h3>
+                        <p>Total Member Premium</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="${totalPremiumIncome}"></h3>
+                        <p>Total Penghasilan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <!-- bar chart -->
+    <div class="bottom-dashboard">
+        <div class="bar-chart">
+            <div class="above">
+                <h4 class="judul-chart">Jumlah Member Premium Baru Per Bulan</h4>
+                <div class="dropdown-container">
+                    <form id="tahunForm" th:action="@{/dashboardpremium}" method="GET" class="search-form">
+                        <select name="tahun" id="tahunDropdown" class="search-dropdown" onchange="submitForm()">
+                            <option th:each="year : ${years}" th:value="${year}" th:text="${year}"
+                                th:selected="${!#lists.isEmpty(years) && year == years[__${#lists.size(years) - 1}__]}">
+                            </option>
+                        </select>
+                    </form>
+                </div>
+                <div class="bar-container justify-content-center m-2">
+                    <canvas id="premiumMembersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tambahkan canvas untuk pie chart -->
+    <div class="bottom-dashboard">
+        <div class="pie-chart">
+            <div class="above">
+                <h4 class="judul-chart">Persentase Jumlah Member Basic & Premium</h4>
+                <div class="pie-container">
+                    <canvas id="memberPercentageChart"></canvas>
+                </div>
+                <div id="memberPercentageText" class="member-percentage-text">
+                    Member Basic: [[${basicMemberPercentage}]]% <br>
+                    Member Premium: [[${premiumMemberPercentage}]]%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Get data from Thymeleaf model
+        var basicMemberPercentage = /*[[${basicMemberPercentage}]]*/;
+        var premiumMemberPercentage = /*[[${premiumMemberPercentage}]]*/;
+
+        // Render pie chart
+        var ctxPie = document.getElementById('memberPercentageChart').getContext('2d');
+        var memberPercentageChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Basic Member', 'Premium Member'],
+                datasets: [{
+                    data: [basicMemberPercentage, premiumMemberPercentage],
+                    backgroundColor: ['#FFA07A', '#20B2AA']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
+            }
+        });
+
+        /*]]>*/
+    </script>
+
+    
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var ctx = document.getElementById('premiumMembersChart').getContext('2d');
+        var newPremiumMembersByMonth = /*[[${newPremiumMembersByMonth}]]*/[];
+
+        var premiumMembersChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'New Premium Members',
+                    data: newPremiumMembersByMonth,
+                    backgroundColor: '#A9D4BC',
+                    borderColor: '#427A5B',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        /*<![CDATA[*/
+        // Render chart on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the selected year from the dropdown
+            var selectedYear = document.getElementById('tahunDropdown').value;
+            console.log(selectedYear);
+            // If selected year is empty, set it to the current year
+            if (!selectedYear) {
+                selectedYear = new Date().getFullYear().toString();
+                document.getElementById('tahunDropdown').value = selectedYear;
+            }
+            // Fetch and render chart for the selected year
+            renderChart(selectedYear);
+        });
+
+        // Function to handle form submission
+        function submitForm() {
+            var selectedYear = document.getElementById('tahunDropdown').value;
+            //         // Show a pop-up with the selected year
+            // alert('Tahun yang dipilih: ' + selectedYear);
+            console.log("Year selected: " + selectedYear); // Debug to ensure this runs
+            // Redirect to dashboardpremium with selected year
+            window.location.href = '/dashboardpremium?tahun=' + selectedYear;
+            // renderChart(selectedYear); // Call renderChart with selectedYear
+        }
+
+
+        // Function to render the chart
+        function renderChart(selectedYear) {
+            // Get the canvas element
+            var ctx = document.getElementById('premiumMembersChart').getContext('2d');
+
+            // Fetch data for the selected year from the server
+            fetch('/dashboardpremium?tahun=' + selectedYear)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract data for the chart
+                    var newPremiumMembersByMonth = data.newPremiumMembersByMonth;
+                    // Show a pop-up with the selected year
+                    alert('Tahun yang dipilih: ' + selectedYear);
+
+                    // Update the chart with the new data
+                    var premiumMembersChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                            datasets: [{
+                                label: 'New Premium Members',
+                                data: newPremiumMembersByMonth,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        /*]]>*/
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>REGISTER SILADU</title>
+    <style>
+      .form-container {
+        background-color: white;
+        border-radius: 24px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        max-width:700px;
+        margin: auto;
+        margin-top: 20px;
+        height: 600px;
+      }
+      .row{
+        height: 100%;
+      }
+      .col-4{
+        display:flex;
+        align-items: flex-end;
+        background-image: linear-gradient(45deg, #427A5B, #F5F6F7);
+        border-radius:24px 24px 0;
+      }
+      .col-8{
+        padding: 25px 45px 25px 25px;
+        margin:auto;
+      }
+      .col-4 h3{
+        padding: 25px;
+        color: white;
+        font-weight: 700;
+      }
+      .label{
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .btn{
+        background-color: var(--primary-color);
+        width: 150px;
+        height: 50px;
+        border-radius: 24px;
+        font-weight: 600;
+      }
+      .btn-daftar{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #427A5B;
+        color: #FFFFFF;
+      }
+      .btn-daftar:hover{
+        background-color: #FFFFFF;
+        color: #427A5B;
+      }
+      label{
+        font-weight: 600;
+      }
+      .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+      @media screen and (max-width: 776px) {
+        .form-container{
+          height:auto;
+          margin:60px;
+        }
+        .form-container .row{
+          display: flex;
+          flex-direction: column;
+          padding: 0 10px;
+        }
+        .form-container .col-4{
+          width:100%;
+          height: 200px;
+        }
+        .form-container .col-8{
+          width:100%;
+        }
+      }
+        .button-container {
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .btn-batal {
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #A20A0A;
+            color: #A20A0A;
+            background-color: transparent;
+        }
+        .btn-batal:hover {
+            background-color: #A20A0A;
+            color: white;
+        }
+        p {
+          font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <br>
+<div class="form-container">
+    <div class="row">
+        <div class="col-4"><h3>Form Registrasi Member</h3></div>
+        <div class="col-8">
+
+            <div th:if="${param.failed}"> <!--connected to redirect in controller-->
+                <div class="alert alert-info">Pendaftaran gagal. Pastikan password yang Anda masukkan sama.</div>
+            </div>
+
+            <div th:if="${param.passFailed}"> <!--connected to redirect in controller-->
+              <div class="alert alert-info">Pendaftaran gagal. Password minimal terdiri dari 6 karakter dengan angka, huruf kapital, dan huruf kecil.</div>
+            </div>
+
+            <div th:if="${param.emailError}"> <!--connected to redirect in controller-->
+                <div class="alert alert-info">Pendaftaran gagal. Email sudah digunakan untuk pendaftaran member.</div>
+            </div>
+
+            <form th:action="@{/registration}" th:object="${userRegistrationDTO}" method="post">
+                <div class="form-group">
+                    <input type="hidden" id="role" name="role" th:value="${role}">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="name">
+                        Nama
+                    </label>
+                    <input id="name" class="form-control" th:field="*{name}" required autofocus="autofocus"/>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label class="control-label" for="email">
+                        Email
+                    </label>
+                    <input id="email" class="form-control" th:field="*{email}" required autofocus="autofocus"/>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label class="control-label" for="password">
+                        Password
+                    </label>
+                    <input id="password" class="form-control" type="password" th:field="*{password}" required autofocus="autofocus"/>
+                    <p>Password minimal terdiri dari 6 karakter yang mencakup huruf kapital, huruf kecil, dan angka.</p>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label class="control-label" for="confirmPassword">
+                        Konfirmasi Password
+                    </label>
+                    <input id="confirmPassword" class="form-control" type="password" th:field="*{confirmPassword}" required autofocus="autofocus"/>
+                </div>
+                <br>
+
+                <div class="button-container">
+                    <button type="button" class="btn btn-batal" onclick="window.location.href='/';">Batal</button>
+                    <button type="submit" class="btn btn-daftar">Daftar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+</body>
+</html>

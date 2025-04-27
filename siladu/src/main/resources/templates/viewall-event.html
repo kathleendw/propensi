@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Event</title>
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 280px;
+            height: 360px;
+            border-radius: 0px;
+            overflow: hidden;
+            background-size: cover;
+            transition: box-shadow 0.2s ease;
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            box-shadow: 0px 0px 13px rgba(0, 0, 0, 0.2);
+            /* transform: translateY(-5px); */
+        }
+
+        .card-image {
+            /* Style the image */
+            width: 100%; /* Make the image fill its container */
+            height: 180px; /* Maintain aspect ratio */
+            object-fit: cover; /* Ensure the image covers the container */
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            padding: 10px;
+            padding-left: 15px;
+        }
+        .btn{
+            background-color: rgb(13, 127, 81);
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            color:white;
+            font-weight: 600;
+            padding-top: 12px;
+            margin-bottom: 30px
+        }
+
+        .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+      .btn-edit:hover{
+        color:var(--black)
+      }
+
+      .btn-delete:hover .delete img {
+            filter: brightness(0) invert(1);
+      }
+
+      .btn-delete:hover {
+        color: white;
+        background-color: #C11D1D;
+      }
+
+        .card-body h6 {
+            margin: 0;
+            padding: 0;
+            font-weight: 450;
+            color: black !important;
+            margin-top: 5px;      
+        }
+        .card-body a {
+            text-decoration: none !important; /* Remove underline from links */
+        }
+
+      .card-text{
+        height: 190px;
+        margin-bottom: 0;
+      }
+      .button{
+        display:flex;
+        justify-content: space-between;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        gap: 15px; /* Space between buttons */
+      }
+      .btn-edit{
+        background-color: #A9D4BC;
+        color: var(--black);
+        width: 110px;
+        height: 40px;
+        border-radius: 15px;
+        padding: 18px 14px 10px;
+        margin-right: 10px;
+
+      }
+      .btn-delete{
+        border: 2px solid #C11D1D;
+        opacity: 80%;
+        background-color:white;
+        color: #C11D1D;
+        width: 110px;
+        height: 40px;
+        border-radius: 15px;
+        padding: 18px 14px 10px;
+        margin-right: 10px;
+
+      }
+      .edit img{
+        width:12px;
+      }
+
+      .delete img{
+        width:12px;
+        margin-bottom: 10px;
+      }
+      .edit , .delete{
+        display: flex;
+        gap: 15px;
+        height: calc(100% - 10px);
+        align-items: center;
+      }
+      .edit p {
+        margin-bottom: 0;
+        align-items: center;
+      }
+
+      .delete p {
+        margin-bottom: 10px;
+        align-items: center;
+      }
+      .col{
+        display:flex;
+        justify-content: center;
+      }
+
+      .pembicara {
+        color: #808080;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        margin-bottom: 2px;
+        font-size: 15px;
+      }
+
+      .title-section {
+          height: 105px; /* Adjust height as needed */
+          overflow: hidden;
+      }
+
+      .card-title {
+          font-weight: 600;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          margin-bottom: 2px;
+          font-size: 19px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: normal;
+          color: black !important;
+      }
+
+
+      
+
+    </style>
+  </head>
+
+<body>
+    <script>
+        // Function to hide the success message when the close button is clicked
+        $(document).ready(function(){
+            $('#successAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('successMessage='); // Remove success message from URL
+            });
+        });
+  
+        $(document).ready(function(){
+            $('#failAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('errorMessage='); // Remove success message from URL
+            });
+        });
+    
+        // Function to remove the success message parameter from the URL
+        function removeMessageFromUrl(message) {
+            var url = window.location.href;
+            var urlParts = url.split('?');
+    
+            // Check if URL contains query parameters
+            if (urlParts.length > 1) {
+                var baseUrl = urlParts[0];
+                var queryParams = urlParts[1].split('&');
+    
+                // Filter out successMessage parameter
+                var filteredParams = queryParams.filter(function(param) {
+                    return !param.startsWith(message);
+                });
+    
+                // Reconstruct URL without successMessage parameter
+                var newUrl = baseUrl + '?' + filteredParams.join('&');
+                
+                // Replace current URL with new URL
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+         // Function to show confirmation dialog
+        function confirmDelete(eventId) {
+            // Show confirmation dialog
+            if (confirm("Apakah Anda yakin ingin menghapus event ini?")) {
+                // If user confirms, submit the form
+                document.getElementById('deleteForm_' + eventId).submit();
+            }
+        }
+    </script>
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+        <!-- Alert for success message -->
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert"
+        th:if="${param.successMessage}">
+        <strong>Sukses!</strong> [[${param.successMessage}]]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- Alert for error message -->
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert"
+        th:if="${param.errorMessage}">
+        <strong>Gagal!</strong> [[${param.errorMessage}]]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="container">
+        <div class="text-center  pt-5 ">
+            <h1 class="fw-bold">Mengelola Event</h1>
+            <br>
+            <a class="btn" th:href="@{/event/tambah}">Tambah Event</a>
+        </div>
+        <br>
+        <!-- Product Display -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" th:if="${not #lists.isEmpty(listEvent)}">
+            <!-- Loop through each product and display it as a clickable card -->
+            <div class="col" th:each="event : ${listEvent}">
+                <div class="card">
+                    <a class="card-link" th:href="@{/event/{idEvent}(idEvent=${event.idEvent})}">
+                        <div class="card-body">
+                                <img class="card-image"  th:src="'data:image/jpg;base64,' +  ${base64ImagesMap[event.idEvent]}" alt="Event Image">
+                                <div class="title-section">
+                                    <h4 class="card-title" th:text="${event.namaEvent}"></h4>
+                                    <p class="pembicara" th:text="'Oleh: ' + ${event.namaPembicara}"></p>
+                                    <h6 th:text="'Rp' + ${event.hargaEvent}"></h6>
+                                </div>
+                                <div class="button">
+                                    <a class="btn btn-edit" th:href="@{/event/update/{idEvent}(idEvent=${event.idEvent})}">
+                                        <div class="edit">
+                                            <img src="/images/pen-solid.svg" alt="edit">
+                                            <p> Ubah</p>
+                                        </div>
+                                    </a>
+                                        <button type="button" class="btn btn-delete" data-toggle="modal"  th:data-target="'#confirmDeleteModal_' + ${event.idEvent}">
+                                            <div class="delete">
+                                                <img src="/images/trash-solid.svg" alt="delete">
+                                                <p> Hapus</p>
+                                            </div>
+                                        </button>
+                                    
+
+            
+                                </div>
+                        </div>
+                         <!-- Modal -->
+                        <div class="modal fade"  th:id="'confirmDeleteModal_' + ${event.idEvent}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Apakah Anda yakin ingin menghapus training ini? Aksi ini tidak dapat diulang
+                                    </div>
+                                    <div class="modal-footer" style="justify-content: center;">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                        <a th:href="@{/event/delete/{idEvent}(idEvent=${event.idEvent})}" class="btn btn-danger" id="deleteLink">Hapus</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            
+            </div>
+        </div>
+        <div class="text-center" style="color:#ADB5BD" th:unless="${not #lists.isEmpty(listEvent)}">
+            <p>Mohon maaf,</p>
+            <p>Event belum tersedia.</p>
+          </div>
+      </div>
+    </div>
+
+
+
+</body>
+
+</html>

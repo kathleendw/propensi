@@ -1,0 +1,868 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Track Pesanan</title>
+    <style>
+        .status-container{
+            display: flex;
+            margin-top: 50px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        }
+        .status-container .btn-status{
+            background-color: transparent;
+            color: var(--black);
+            border: none;
+            font-weight: 600;
+            width: calc(100%/3);
+            padding-bottom: 1.5rem;
+            border-radius: 0;
+        }
+        .status-container .btn-status.active{
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .status-container  .btn:focus{
+            box-shadow: none;
+        }
+        .pesanan-container{
+            margin: 50px 0;
+        }
+        .col{
+            gap: 20px;
+            display: flex;
+             flex-direction: column;
+        }
+        .card{
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card h3, .card h4{
+            font-weight: 700;
+        }
+        .card h4{
+            color: var(--black);
+        }
+        .card h3{
+            color: var(--primary-color);
+        }
+        .card p{
+            color: #808080
+        }
+        .harga-button, .judul-timer{
+            display: flex;
+            justify-content: space-between;
+        }
+        .harga-button .btn{
+            background-color: var(--primary-color);
+            border-radius: 34px;
+            color: white !important;
+            font-weight: 600;
+            padding: 7px 30px 5px 30px;
+        }
+        .card-upper-sukses p, .card-upper-tunggu p, .card-upper-gagal p{
+            padding-left: 30px;
+            padding-top: 20px;
+        }
+        .card-upper-sukses p {
+            color: var(--primary-color);
+        }
+        .card-upper-tunggu p {
+            color: #91730A;
+        }
+        .card-upper-gagal p {
+            color: #841F1F;
+        }
+        .card-upper-sukses, .card-upper-tunggu, .card-upper-gagal{
+            border-radius: 24px 24px 0 0;
+            height: 60px;
+        }
+        .judul-timer p {
+            color: #A20A0A;
+        }
+        .btnn{
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: 600;
+            padding-top: 12px;
+            margin-bottom: 30px;
+        }
+        .btnn:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            color:white;
+        }
+        .btn-edit:hover{
+            color:var(--black)
+        }
+        .button{
+            display:flex;
+            justify-content: center;
+            gap:40px;
+            margin-top:40px;
+        }
+        .btn-edit{
+            background-color: #A9D4BC;
+            color: var(--black);
+            border-radius: 24px;
+            padding: 20px 30px 10px;
+        }
+        .btn-secondary{
+            border: 2px solid var(--primary-color);
+            background-color:white;
+            color: var(--primary-color);
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: #A9D4BC;
+            color: var(--primary-color);
+        }
+    </style>
+  </head>
+
+  <body>
+    <script >
+        // Function to hide the success message when the close button is clicked
+        $(document).ready(function(){
+            $('#successAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('successMessage='); // Remove success message from URL
+            });
+        });
+  
+        $(document).ready(function(){
+            $('#failAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('errorMessage='); // Remove success message from URL
+            });
+        });
+    
+        // Function to remove the success message parameter from the URL
+        function removeMessageFromUrl(message) {
+            var url = window.location.href;
+            var urlParts = url.split('?');
+    
+            // Check if URL contains query parameters
+            if (urlParts.length > 1) {
+                var baseUrl = urlParts[0];
+                var queryParams = urlParts[1].split('&');
+    
+                // Filter out successMessage parameter
+                var filteredParams = queryParams.filter(function(param) {
+                    return !param.startsWith(message);
+                });
+    
+                // Reconstruct URL without successMessage parameter
+                var newUrl = baseUrl + '?' + filteredParams.join('&');
+                
+                // Replace current URL with new URL
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+        // Function to check URL parameters and activate corresponding button
+
+        function showSection(sectionName) {
+            // Hide all sections
+            var sections = document.getElementsByClassName("pesanan-container");
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = "none";
+            }
+
+            // Show the selected section
+            document.getElementById(sectionName).style.display = "flex";
+
+            // Remove 'active' class from all buttons
+            var buttons = document.getElementsByClassName("btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Add 'active' class to the clicked button
+            document.getElementById("btn" + sectionName.replace(" ", "")).classList.add("active");
+        }
+
+        // Call the function when the page loads
+        window.onload = function() {
+            // Check if there's an active section parameter in the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var activeSection = urlParams.get('activeSection');
+            if (activeSection) {
+                // Call the showSection function with the active section name
+                showSection(activeSection);
+            }
+        }
+
+        
+    </script>
+ 
+     
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    
+  
+    <div class="container">
+        <div class="status-container">
+            <button class="btn btn-status active" onclick="showSection('Belum Bayar')" id="btnBelumBayar">Belum Bayar</button>
+            <button class="btn btn-status" onclick="showSection('Diproses')" id="btnDiproses">Diproses</button>
+            <button class="btn btn-status" onclick="showSection('Status Pembayaran')" id="btnStatusPembayaran">Status Pembayaran</button>
+        </div>
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+            <strong>Sukses!</strong><span th:text="${successMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.successMessage}">
+            <strong>Sukses!</strong>[[${param.successMessage}]]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${param.errorMessage}">
+            <strong>Gagal!</strong>[[${param.errorMessage}]]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+          </div>  
+        
+        <div class="pesanan-container" id="Belum Bayar" >
+            <div class="col" >
+                <div class="card" th:each="item : ${listPesanan}" th:if="${item.statusPesanan == 'BELUM_BAYAR'}">
+                    <a th:href="@{/pesanan/{id}/belum-bayar/detail(id=${item.idPesanan})}" class="card-link">
+                        <div class="card-body" th:if="${item.jenisPesanan == 'LAYANAN'}">
+                            <div class="judul-timer">
+                                <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                                <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                            </div>
+                            <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                            <div class="harga-button">
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/belum-bayar/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                            </div>
+                           
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/ '';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                                })();
+                                /*]]>*/
+                            </script>
+                            
+                            
+                            
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'TRAINING'}">
+                            <div class="judul-timer">
+                                <h4 th:text="${item.training.judulTraining}"></h4>
+                                <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                            </div>
+                            <p>Training</p>
+                            <div class="harga-button">
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/belum-bayar/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                            </div>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                   
+                                })();
+                                /*]]>*/
+                            </script>
+                           
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'PREMIUM'}">
+                            <div class="judul-timer">
+                                <h4 >Update Member Premium</h4>
+                                <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                            </div>
+                            <p>Member Premium</p>
+                            <div class="harga-button">
+                                <h3>Rp100.000</h3>
+                                <a th:href="@{/pesanan/{id}/belum-bayar/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                            </div>
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'EVENT'}">
+                            <div class="judul-timer">
+                                <h4 th:text="${item.event.namaEvent}"></h4>
+                                <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                            </div>
+                            <p>Event</p>
+                            <div class="harga-button" >
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/belum-bayar/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                            </div>
+                            
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                 
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <script th:inline="javascript" defer="defer">
+                            /*<![CDATA[*/
+                            (function() {
+                                var waktuPesanan = /*[[${item.waktuPesanan}]]*/ '';
+                                var countDownDate = new Date(waktuPesanan);
+                                countDownDate.setHours(countDownDate.getHours() + 24);
+                                var countdownId = 'countdown-' + /*[[${item.idPesanan}]]*/ ''; 
+                                var x = setInterval(function() {
+                                    var now = new Date().getTime();
+                                    var distance = countDownDate - now;
+                                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                    var countdownElement = document.getElementById(countdownId);
+                                    if (countdownElement) {
+                                        countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                                    if (distance < 0) {
+                                        clearInterval(x);
+                                        document.getElementById(countdownId).innerHTML = "EXPIRED";
+                                    }
+                                }, 1000);
+                            })();
+                            /*]]>*/
+                        </script>
+                    </a>    
+                </div>
+            </div>
+        </div>
+        <div class="pesanan-container" id="Diproses" style="display: none;" >
+            <div class="col" >
+                <div class="card" th:each="item : ${listPesanan}" th:if="${item.statusPesanan == 'DIPROSES'}">
+                    <a class="card-link" th:href="@{/pesanan/{id}/diproses/detail(id=${item.idPesanan})}">
+                        <div class="card-body" th:if="${item.jenisPesanan == 'LAYANAN'}">
+                            <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                            <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                            <div class="harga-button">
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/diproses/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                            </div>
+                            
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/ '';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'TRAINING'}">
+                            <h4 th:text="${item.training.judulTraining}"></h4>
+                            <p>Training</p>
+                            <div class="harga-button" >
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/diproses/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                            </div>
+                            
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                    
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'PREMIUM'}">
+                            <h4>Update Member Premium</h4>
+                            <p>Member Premium</p>
+                            <div class="harga-button" th:if="${userRole == 'MEMBER_BASIC'}">
+                                <h3>Rp100.000</h3>
+                                <a th:href="@{/pesanan/{id}/diproses/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                            </div>
+                        </div>
+                        <div class="card-body" th:if="${item.jenisPesanan == 'EVENT'}">
+                            <h4 th:text="${item.event.namaEvent}"></h4>
+                            <p>Event</p>
+                            <div class="harga-button" >
+                                <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                <a th:href="@{/pesanan/{id}/diproses/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                            </div>
+                            
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                    
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="pesanan-container" id="Status Pembayaran" style="display: none;" >
+            <div class="col" >
+                <div class="card" style="padding: 0px;" th:each="item : ${listPesanan}" th:if="${item.statusPesanan == 'STATUS_PEMBAYARAN'}">
+                    <a class="card-link" th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}">
+                        <div class="card-body" style="padding: 0px;" th:if="${item.jenisPesanan == 'LAYANAN'}">
+                            <script th:inline="javascript">
+                                function handleFormSubmit() {
+                                    document.getElementById("forms").submit();
+                                    var idPesanan = /*[[ ${item.idPesanan} ]]*/ '';
+                                    var idPembayaran = /*[[ ${item.idPembayaran} ]]*/ '';
+                                    window.location.href = '/pesanan/' + idPesanan + '/hapus';
+                                    window.location.href = '/pembayaran/' + idPembayaran + '/hapus';
+                                }
+                            </script>
+                            <th:block th:each="pembayaran : ${listPembayaran}">
+                                <div class="card-upper-sukses" style="background-color:#D4E9DD;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <p><strong>Sukses!</strong> Pembayaran valid.</p>
+                                </div>
+                                <div class="card-upper-tunggu" style="background-color:#F5EED2;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Mohon lakukan pembayaran kembali.</p>
+                                </div>
+                                <div class="card-upper-gagal" style="background-color:#E9D4D4;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Waktu melakukan pembayaran kembali sudah habis. Mohon lakukan pemesanan ulang.</p>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                                    <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                                    <div class="harga-button">
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                                    </div>
+                                    
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                                        <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                                    </div>
+                                    <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                                    <div class="harga-button">
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                                    </div>
+                                    
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                                    <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                                    <div class="harga-button">
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a href="#" class="btn" data-toggle="modal" data-target="#confirmPesanModal">Pesan Ulang</a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="confirmPesanModal" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pemesanan</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Apakah Anda yakin ingin memesan Paket Layanan ini?
+                                                    </div>
+                                                    <div class="modal-footer" style="justify-content: center;">
+                                                        <button type="button" class="btnn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                                        <form id="forms" th:action="@{/paketlayanan/{id}/pesan(id=${item.paketLayanan.id})}"
+                                                        th:object="${pesananDTO}"
+                                                        method="POST">
+                                                            <button type="submit" class="btnn btn-edit" style="padding:12px; background-color: var(--primary-color); border: none" onclick="handleFormSubmit()">
+                                                                <div class="pesan">
+                                                                    <p style="color: white; margin:0">Pesan</p>
+                                                                </div>
+                                                            </button>
+                                                        </form>     
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/ '';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div class="card-body" style="padding: 0px;" th:if="${item.jenisPesanan == 'TRAINING'}">
+                            <script th:inline="javascript">
+                                function handleFormSubmit() {
+                                    document.getElementById("forms").submit();
+                                    var idPesanan = /*[[ ${item.idPesanan} ]]*/ '';
+                                    var idPembayaran = /*[[ ${item.idPembayaran} ]]*/ '';
+                                    window.location.href = '/pesanan/' + idPesanan + '/hapus';
+                                    window.location.href = '/pembayaran/' + idPembayaran + '/hapus';
+                                }
+                            </script>
+                            <th:block th:each="pembayaran : ${listPembayaran}">
+                                <div class="card-upper-sukses" style="background-color:#D4E9DD;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <p><strong>Sukses!</strong> Pembayaran valid.</p>
+                                </div>
+                                <div class="card-upper-tunggu" style="background-color:#F5EED2;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Mohon lakukan pembayaran kembali.</p>
+                                </div>
+                                <div class="card-upper-gagal" style="background-color:#E9D4D4;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Waktu melakukan pembayaran kembali sudah habis. Mohon lakukan pemesanan ulang.</p>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <h4 th:text="${item.training.judulTraining}"></h4>
+                                    <p>Training</p>
+                                    <div class="harga-button" >
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                                    </div>
+                                  
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.training.judulTraining}"></h4>
+                                        <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                                    </div>
+                                    <p>Training</p>
+                                    <div class="harga-button">
+                                        <h3  th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                                    </div>
+                                    
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <h4 th:text="${item.training.judulTraining}"></h4>
+                                    <p>Training</p>
+                                    <div class="harga-button">
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                       
+                                        <a href="#" class="btn" data-toggle="modal" data-target="#confirmPesanModal">Daftar Ulang</a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="confirmPesanModal" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pendaftaran</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Apakah Anda yakin ingin mendaftar pada training ini?
+                                                    </div>
+                                                    <div class="modal-footer" style="justify-content: center;">
+                                                        <button type="button" class="btnn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                                        <form id="forms" th:action="@{/training/{idTraining}/daftar(idTraining=${item.training.idTraining})}"
+                                                        th:object="${pesananDTO}"
+                                                        method="POST">
+                                                            <button type="submit" class="btnn btn-edit" style="padding:12px; background-color: var(--primary-color); border:none;" onclick="handleFormSubmit()">
+                                                                <div class="pesan">
+                                                                    <p style="color:white; margin:0">Daftar</p>
+                                                                </div>
+                                                            </button>
+                                                        </form>        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket = /*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                    
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div class="card-body" style="padding: 0px;" th:if="${item.jenisPesanan == 'EVENT'}">
+                            <script th:inline="javascript">
+                                function handleFormSubmit() {
+                                    document.getElementById("forms").submit();
+                                    var idPesanan = /*[[ ${item.idPesanan} ]]*/ '';
+                                    var idPembayaran = /*[[ ${item.idPembayaran} ]]*/ '';
+                                    window.location.href = '/pesanan/' + idPesanan + '/hapus';
+                                    window.location.href = '/pembayaran/' + idPembayaran + '/hapus';
+                                }
+                            </script>
+                            <th:block th:each="pembayaran : ${listPembayaran}">
+                                <div class="card-upper-sukses" style="background-color:#D4E9DD;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <p><strong>Sukses!</strong> Pembayaran valid.</p>
+                                </div>
+                                <div class="card-upper-tunggu" style="background-color:#F5EED2;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Mohon lakukan pembayaran kembali.</p>
+                                </div>
+                                <div class="card-upper-gagal" style="background-color:#E9D4D4;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Waktu melakukan pembayaran kembali sudah habis. Mohon lakukan pemesanan ulang.</p>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <h4 th:text="${item.event.namaEvent}"></h4>
+                                    <p>Event</p>
+                                    <div class="harga-button">
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                                    </div>
+                                  
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.event.namaEvent}"></h4>
+                                        <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                                    </div>
+                                    <p>Event</p>
+                                    <div class="harga-button" >
+                                        <h3 th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                                    </div>
+                                   
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <h4 th:text="${item.event.namaEvent}"></h4>
+                                    <p>Event</p>
+                                    <div class="harga-button">
+                                        <h3  th:id="'hargaPaketId-' + ${item.idPesanan}"></h3>
+                                       
+                                        <a href="#" class="btn" data-toggle="modal" data-target="#confirmPesanModalEvent">Daftar Ulang</a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="confirmPesanModalEvent" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pendaftaran</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Apakah Anda yakin ingin mendaftar pada event ini?
+                                                    </div>
+                                                    <div class="modal-footer" style="justify-content: center;">
+                                                        <button type="button" class="btnn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                                        <form id="forms" th:action="@{/event/daftar/{idEvent}(idEvent=${item.event.idEvent})}"
+                                                        th:object="${pesananDTO}"
+                                                        method="POST">
+                                                            <button type="submit" class="btnn btn-edit" style="padding:12px; background-color: var(--primary-color); border:none;" onclick="handleFormSubmit()">
+                                                                <div class="pesan">
+                                                                    <p style="color:white; margin:0">Daftar</p>
+                                                                </div>
+                                                            </button>
+                                                        </form>        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                (function() {
+                                    var hargaPaket =/*[[${item.hargaPesanan}]]*/'';
+                                    var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                                    
+                                    var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                    var hargaPaketElement = document.getElementById(hargaPaketId);
+                                    if (hargaPaketElement) {
+                                        hargaPaketElement.innerHTML = "Rp" + formattedHargaPaket.replace(/,/g, '.');
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                            
+                                   
+                                })();
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div class="card-body" style="padding: 0px;" th:if="${item.jenisPesanan == 'PREMIUM'}">
+                            <script th:inline="javascript">
+                                function handleFormSubmit() {
+                                    document.getElementById("forms").submit();
+                                    var idPesanan = /*[[ ${item.idPesanan} ]]*/ '';
+                                    var idPembayaran = /*[[ ${item.idPembayaran} ]]*/ '';
+                                    window.location.href = '/pesanan/' + idPesanan + '/hapus';
+                                    window.location.href = '/pembayaran/' + idPembayaran + '/hapus';
+                                }
+                            </script>
+                            <th:block th:each="pembayaran : ${listPembayaran}">
+                                <div class="card-upper-sukses" style="background-color:#D4E9DD;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <p><strong>Sukses!</strong> Pembayaran valid.</p>
+                                </div>
+                                <div class="card-upper-tunggu" style="background-color:#F5EED2;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Mohon lakukan pembayaran kembali.</p>
+                                </div>
+                                <div class="card-upper-gagal" style="background-color:#E9D4D4;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <p><strong>Gagal!</strong> Pembayaran invalid. Waktu melakukan pembayaran kembali sudah habis. Mohon lakukan pemesanan ulang.</p>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                    <h4>Update Member Premium</h4>
+                                    <div class="harga-button">
+                                        <h3>Rp100.000</h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Selengkapnya</a>
+                                    </div>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI'}">
+                                    <div class="judul-timer">
+                                        <h4>Update Member Premium</h4>
+                                        <p>Selesaikan dalam <span th:id="'countdown-' + ${item.idPesanan}"></span></p>
+                                    </div>
+                                    <div class="harga-button" th:if="${userRole == 'MEMBER_BASIC'}">
+                                        <h3>Rp100.000</h3>
+                                        <a th:href="@{/pesanan/{id}/status-pembayaran/detail(id=${item.idPesanan})}" class="btn">Bayar</a>
+                                    </div>
+                                </div>
+                                <div class="card-bottom" style="padding: 20px; padding-left: 30px;" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'GAGAL'}">
+                                    <h4>Update Member Premium</h4>
+                                    <div class="harga-button">
+                                        <h3 th:if="${userRole == 'MEMBER_BASIC'}">Rp100.000</h3>
+                                        <a href="#" class="btn" data-toggle="modal" data-target="#confirmPesanModal">Daftar Ulang</a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="confirmPesanModal" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pendaftaran</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Apakah Anda yakin ingin mendaftar menjadi member premium?
+                                                    </div>
+                                                    <div class="modal-footer" style="justify-content: center;">
+                                                        <button type="button" class="btnn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                                        <form id="forms" th:action="@{/pesan/member-premium}"
+                                                        th:object="${pesananDTO}"
+                                                        method="POST">
+                                                            <button type="submit" class="btnn btn-edit" style="padding:12px; background-color: var(--primary-color); border:none;" onclick="handleFormSubmit()">
+                                                                <div class="pesan">
+                                                                    <p style="color:white; margin:0">Daftar</p>
+                                                                </div>
+                                                            </button>
+                                                        </form>        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <script th:inline="javascript" defer="defer">
+                            /*<![CDATA[*/
+                            (function() {
+                                var waktuKonfirmasi = /*[[${item.waktuKonfirmasi}]]*/ '';
+                                var countDownDate = new Date(waktuKonfirmasi);
+                                countDownDate.setHours(countDownDate.getHours() + 24);
+
+                                var countdownId = 'countdown-' + /*[[${item.idPesanan}]]*/ ''; 
+                                console.log(countdownId);
+                                var x = setInterval(function() {
+                                    var now = new Date().getTime();
+                                    var distance = countDownDate - now;
+                                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                    var countdownElement = document.getElementById(countdownId);
+                                    if (countdownElement) {
+                                        countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+                                    } else {
+                                        console.error("Element not found.");
+                                    }
+                                    if (distance < 0) {
+                                        clearInterval(x);
+                                        document.getElementById(countdownId).innerHTML = "EXPIRED";
+                                    }
+                                }, 1000);
+                            })();
+                            /*]]>*/
+                        </script>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>  
+</body>
+
+</html>

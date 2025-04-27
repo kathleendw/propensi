@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+         
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+        .upper-dashboard{
+            margin: 30px 0;
+        }
+        .card-list{
+            display: flex;
+            gap:20px;
+        }
+        .card{
+            width: 25%;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        .text-img{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+        .card-img{
+            width:auto
+        }
+        .card-text p, .card-text h3 {
+            font-weight: 700;
+        }
+        .card-text h3 {
+            color: var(--primary-color);
+        }
+
+        .bottom-dashboard{
+            display: flex;
+            align-items: stretch;
+            gap: 30px;
+        }
+        .rating{
+            width: 65%;
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        .pie-chart{
+            width: 35%;
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        .judul-chart{
+            padding: 30px;
+            font-weight: 700;
+        }
+        .above{
+             display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .search-dropdown{
+            padding: 10px 30px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        .line-chart{
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 40px 0;
+        }
+        table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+            background-color: unset;
+        }
+        table.dataTable.display tbody tr.odd>.sorting_1, table.dataTable.order-column.stripe tbody tr.odd>.sorting_1{
+            background-color: unset;
+        }
+        table.dataTable.display tbody tr.even>.sorting_1, table.dataTable.order-column.stripe tbody tr.even>.sorting_1 {
+            background-color: unset;
+        }
+        .dataTables_wrapper.no-footer .dataTables_scrollBody{
+            border-bottom: none;
+        }
+        .table{
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+        .status.delivered , .status.cancelled, .status.pending, .status.shipped{
+            border-radius: 24px;
+            padding: 5px 10px;
+            text-align: center;
+            width: fit-content;
+            display: flex;
+        }
+        .table-text{
+            margin-bottom: 0;
+        }
+        
+        .status.delivered {
+            background-color: #86e49d;
+        }
+
+        .status.cancelled {
+            background-color: #A20A0A;
+        }
+
+        .status.pending {
+            background-color: #ebc474;
+        }
+
+        .status.shipped {
+            background-color: #6fcaea;
+        }
+        .status-text{
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        table.dataTable thead .sorting_asc , table.dataTable thead .sorting ,table.dataTable thead .sorting {
+            border-bottom: none;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 24px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+            background: #808080;
+            color: white !important;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+            background: unset;
+            color: black !important;
+            border: none;
+        }
+        @media screen and (max-width: 768px) {
+            .card-list, .bottom-dashboard{
+                flex-direction: column;
+            }
+            .card, .rating, .pie-chart{
+                width: 100%;
+            }
+            .judul-chart{
+                text-align: center;
+            }
+        }
+        @media screen and (max-width: 380px) {
+            .above{
+                flex-direction: column;
+            }
+            .dropdown-container{
+                margin: 0;
+                margin-bottom: 20px;
+            }
+            .container h1{
+                text-align: center;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+  
+<div class="container">
+    <h1 style="margin-top:50px" class="fw-bold">Dashboard Event</h1>
+    <div class="upper-dashboard">
+        <div class="card-list">
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="${jumlahEvent}"></h3>
+                        <p>Event</p>
+                    </div>
+                    <div class="card-img">
+                        <img src="/images/box-solid.svg" style="width: 30px" alt="pesanan">
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="${jumlahPesanan}"></h3>
+                        <p>Pesanan</p>
+                    </div>
+                    <div class="card-img">
+                        <img src="/images/users-solid.svg" style="width: 30px" alt="pesanan">
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="${jumlahPeserta}"></h3>
+                        <p>Peserta</p>
+                    </div>
+                    <div class="card-img">
+                        <img src="/images/users-solid.svg" style="width:30px" alt="pesanan">
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="text-img">
+                    <div class="card-text">
+                        <h3 th:text="'Rp ' +${jumlahPenghasilan}"></h3>
+                        <p>Penghasilan</p>
+                    </div>
+                    <div class="card-img">
+                        <img src="/images/hand-holding-dollar-solid.svg" style="width:30px" alt="pesanan">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-dashboard">
+        <div class="rating">
+            <div class="above">
+                <h4 class="judul-chart">Rating Event</h4>
+            </div>
+            <div class="tableRating" style="padding: 30px;">
+                <table id="tableIDRating" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Event</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item, iterationStatus :${list}">
+                            <td>
+                                <p class="table-text" th:text="${iterationStatus.count}"></p>
+                            </td>
+                            <td>
+                                <p class="table-text" th:text="${item.key}"></p>
+                            </td>
+                            <td>
+                                <p class="table-text" th:text="${item.value}"></p>
+                            </td>
+                        
+                        </tr>
+        
+                    </tbody>
+                </table>
+                </div>
+        </div>
+        <div class="pie-chart">
+            <h4 class="judul-chart">Jumlah Pesanan Tiap Event</h4>
+            <div class="row justify-content-center m-2">
+                <div th:if="${#maps.isEmpty(listPie)}">
+                    <p style="text-align: center;
+                    color: #808080;">Maaf, belum ada pesanan pada event</p>
+                </div>
+                <canvas id="chartPie" th:unless="${#maps.isEmpty(listPie)}"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="line-chart">
+        <div class="above">
+            <h4 class="judul-chart">Jumlah Pendapatan Per Bulan</h4>
+            <div class="dropdown-container" >
+                <form id="searchForm" th:action="@{/dashboard/event}" method="GET" class="search-form">
+                    <select name="tahun" id="tahunDropdown" class="search-dropdown">
+                       <option th:each="year : ${years}" th:value="${year}" th:text="${year}" 
+        th:selected="${!#lists.isEmpty(years) && year == years[__${#lists.size(years) - 1}__]}"></option>
+
+                    </select>
+                </form>
+            </div>
+        </div>
+        <div class="row justify-content-center m-2">
+            <canvas id="chartLine"></canvas>
+        </div>
+    </div>
+    <div class="table">
+        <h4 class="judul-chart" style="    padding: 30px 0">Daftar Pesanan</h4>
+        <table id="tableID" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Pembeli</th>
+                    <th>Event</th>
+                    <th>Harga</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, iterationStatus :${listPesanan}">
+                    <td>
+                        <p class="table-text" th:text="${iterationStatus.count}"></p>
+                    </td>
+                    <td>
+                        <p class="table-text" th:text="${item.user.name}"></p>
+                    </td>
+                    <td>
+                        <p class="table-text" th:text="${item.event.namaEvent}"></p>
+                    </td>
+                    <td>
+                        <p th:id="'hargaPaketId-' + ${item.idPesanan}"></p>
+                    </td>
+                    <td>
+                        <div class="status" th:class="${'status ' + 
+                            (item.statusPesanan == 'BELUM_BAYAR' || item.statusPesanan == 'DIPROSES' ? 'pending ' : '') + 
+                            (item.statusPesanan == 'STATUS_PEMBAYARAN' ? 
+                                (listPembayaran[iterationStatus.count-1].statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI' ? 'pending ' : '') +
+                                (listPembayaran[iterationStatus.count-1].statusPembayaran == 'PERLU KONFIRMASI' ? 'shipped ' : '') +
+                                (listPembayaran[iterationStatus.count-1].statusPembayaran == 'SUKSES' ? 'delivered ' : '') +
+                                (listPembayaran[iterationStatus.count-1].statusPembayaran == 'GAGAL' ? 'cancelled ' : '') 
+                            : '')}">
+                            <span class="status-text" th:text="${item.statusPesanan == 'BELUM_BAYAR' ? 'Belum Bayar' :
+                            (item.statusPesanan == 'DIPROSES' ? 'Diproses' :
+                                (item.statusPesanan == 'STATUS_PEMBAYARAN' ?
+                                    (listPembayaran[iterationStatus.count-1].statusPembayaran == 'MENUNGGU_PEMBAYARAN_KEMBALI' ? 'Menunggu Pembayaran Kembali' :
+                                        (listPembayaran[iterationStatus.count-1].statusPembayaran == 'PERLU KONFIRMASI' ? 'Perlu Konfirmasi' :
+                                            (listPembayaran[iterationStatus.count-1].statusPembayaran == 'SUKSES' ? 'Sukses' :
+                                                (listPembayaran[iterationStatus.count-1].statusPembayaran == 'GAGAL' ? 'Gagal' : '')
+                                            )
+                                        )
+                                    ) : '')
+                            )}">
+                            </span>
+                        </div>
+                    </td>
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        (function() {
+                            var hargaPaket = /*[[${item.hargaPesanan}]]*/ '';
+                            var formattedHargaPaket = hargaPaket.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                            
+                            var hargaPaketId = 'hargaPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                            var hargaPaketElement = document.getElementById(hargaPaketId);
+                            if (hargaPaketElement) {
+                                hargaPaketElement.innerHTML = "Rp " + formattedHargaPaket.replace(/,/g, '.');
+                            } else {
+                                console.error("Element not found.");
+                            }
+                    
+                        })();
+                        /*]]>*/
+                    </script>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script>
+     $(document).ready(function () {
+            $('#tableID').DataTable({
+                "lengthMenu": [5, 10, 20],
+                "scrollX": true
+            });
+        });
+        $(document).ready(function () {
+            $('#tableIDRating').DataTable({
+                "lengthMenu": [5, 10, 20],
+                "scrollX": true
+            });
+        });
+document.getElementById('tahunDropdown').addEventListener('change', function() {
+    submitForm();
+});
+
+function submitForm() {
+    var tahunValue = document.getElementById('tahunDropdown').value;
+ 
+    // Construct the URL with both parameters
+    var url = '/dashboard/event?tahun=' + tahunValue;
+    
+    // Redirect to the constructed URL
+    window.location.href = url;
+}
+
+    var selectedValue = "[[${selectedYear}]]"; // It will be null if no year is selected
+    // Add this script to update the dropdown's selected option after the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        var tahunDropdown = document.getElementById('tahunDropdown');
+        for (var i = 0; i < tahunDropdown.options.length; i++) {
+            if (tahunDropdown.options[i].value === selectedValue) {
+                tahunDropdown.options[i].selected = true;
+                break;
+            }
+        }
+    });
+</script>
+<script th:inline="javascript">
+    
+var listPie = [[${listPie}]];
+
+    var labelsPie = Object.keys(listPie);
+    var chartDataPie= labelsPie.map(function(key) {
+        return listPie[key];
+    });
+
+    var colorsPie = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+    ];
+
+
+    const ctxPie = document.getElementById('chartPie');
+
+
+
+new Chart(ctxPie, {
+    type: 'pie',
+    data: {
+        labels: labelsPie,
+        datasets: [{
+            label: 'Jumlah Pemesanan',
+            data: chartDataPie,
+            backgroundColor: colorsPie,
+            borderWidth: 1
+        }]
+    },
+});
+
+
+
+var Utils = {
+    months: function(options) {
+        // Implement logic to generate months based on options
+        // This is just a placeholder, you can replace it with your actual logic
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return months;
+    }
+};
+
+
+    const ctxLine = document.getElementById('chartLine');
+
+
+    var listLine = [[${listLine}]];
+    console.log(listLine)
+    
+    var labelsline = Utils.months({count: 12});
+    console.log(labelsline)
+new Chart(ctxLine, {
+    type: 'line',
+    data: {
+        labels: labelsline,
+        datasets: [{
+            label: 'Jumlah Pendapatan',
+            data: listLine,
+            fill: false,
+            borderColor: 'rgb(66, 122, 91)',
+            tension: 0.1
+        }]
+    },
+});
+</script>
+
+</body>
+</html>

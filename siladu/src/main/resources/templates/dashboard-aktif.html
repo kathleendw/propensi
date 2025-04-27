@@ -1,0 +1,264 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Detail Pesanan Belum Bayar</title>
+    <style>
+        .container{
+            margin-top: 50px;
+        }
+        .table-card, .graph-card, .card{
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .graph-card {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        #viewModeSelect {
+            width: auto;
+            max-width: 200px;
+            padding-right: 30px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: 20px;
+        }
+        .search-input {
+            color:#808080;
+            border: 1px solid #427A5B;
+            border-radius: 20px;
+            margin-right: 5px;
+            padding: 5px;
+        }
+        .search-input:focus {
+            outline: none;
+        }
+        .top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .search img {
+            margin-top: 3px;
+            width:16px;
+            cursor: pointer;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .upper-dashboard{
+            margin: 30px 0;
+
+        }
+        .card-list{
+            display: flex;
+            gap:20px;
+            justify-content: space-evenly;
+        }
+        .text-img{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+    </style>
+  </head>
+
+  <body>
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    <div class="container">
+        <h1 style="margin-top:50px" class="fw-bold">Dashboard Keaktifan Member</h1>
+        <div class="upper-dashboard">
+            <div class="card-list">
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${totalMemberBasic}"></h3>
+                            <p>Member basic terdaftar</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/people-fill.svg" style="width: 25px" alt="memberbasic">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${totalMemberPremium}"></h3>
+                            <p>Member premium terdaftar</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/people-fill.svg" style="width: 25px" alt="memberpremium">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${totalMemberAktif}"></h3>
+                            <p>Member aktif bulan ini</p>
+                        </div>
+                        <div class="card-img">
+                            <img src="/images/calendar2-check-fill.svg" style="width: 30px" alt="active">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="graph-card">
+            <h3 class="fw-bold">Chart Keaktifan Member</h3>
+            <div class="form-group">
+                <label for="viewModeSelect">Pilih Mode Tampilan:</label>
+                <select class="form-control" id="viewModeSelect" onchange="updateChart()">
+                    <option value="monthly">Bulanan</option>
+                    <option value="daily">Harian</option>
+                </select>
+            </div>
+            
+            <canvas id="chartId" aria-label="chart" max-heigth="350" width=650></canvas>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+            <script th:inline="javascript">
+                var monthlyData = /*[[${monthlyChartData}]]*/[];
+                var dailyData = /*[[${dailyChartData}]]*/[];
+    
+                var currentData = monthlyData; // Default to monthly view
+    
+                function updateChart() {
+                    var viewModeSelect = document.getElementById("viewModeSelect");
+                    var selectedViewMode = viewModeSelect.options[viewModeSelect.selectedIndex].value;
+    
+                    if (selectedViewMode === "monthly") {
+                        currentData = monthlyData;
+                        chartId.data.labels = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                    } else if (selectedViewMode === "daily") {
+                        currentData = dailyData;
+                        chartId.data.labels = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                    }
+    
+                    chartId.data.datasets[0].data = currentData;
+                    chartId.update();
+                }
+    
+                var chrt = document.getElementById("chartId").getContext("2d");
+                var chartId = new Chart(chrt, {
+                    type: 'line',
+                    data: {
+                        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+                        datasets: [{
+                            label: "Grafik Keaktifan Member",
+                            data: currentData,
+                            backgroundColor: ['#427A5B'],
+                            borderColor: ['black'],
+                            borderWidth: 2,
+                            pointRadius: 5,
+                        }],
+                    },
+                    options: {
+                        responsive: false,
+                    },
+                    scales: {
+                        y: {
+                           min: 0,
+                        }
+                    },
+                });
+            </script>
+        </div>
+        
+        <div class="table-card">
+            <div class="top">
+                <h3 class="fw-bold">Tabel Keaktifan Member</h3>
+                <div class="search-container">
+                    <input class="search-input" type="text" id="myInput" onkeyup="searchFunction()" placeholder="Cari nama...">
+                    <div class="search">
+                        <img src="/images/magnifying-glass-solid.svg" alt="search">
+                    </div>
+                </div>
+            </div>
+
+            <table id="myTable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nama Member</th>
+                    <th scope="col">UMKM</th>
+                    <th scope="col">Jenis Member</th>
+                    <th scope="col">Status Keaktifan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="member, index : ${memberList}">
+                    <td th:text="${index.index + 1}"></td>
+                    <td>
+                        <a th:href="@{'/member/detail/' + ${member.id}}">
+                            <span th:text="${member.name}"></span>
+                        </a>
+                    </td>
+                    <td th:text="${member.umkm}"></td>
+                    <td th:text="${member.role}"></td>
+                        <!-- Conditional Status Keaktifan -->
+                        <!--"Aktif Hari Ini", "Aktif Minggu Ini", "Tidak Aktif Bulan Ini", "Tidak Aktif Selama 3 Bulan", 
+                            "Tidak Aktif Selama 6 Bulan", "Tidak Aktif Selama Lebih Dari 6 Bulan"-->
+                    <td>
+                        <script th:inline="javascript">
+                            var currentDate = new Date();
+                            var lastSignedIn = new Date (/*[[${member.lastSignIn}]]*/'');
+                            var time_difference = currentDate.getTime() - lastSignedIn.getTime(); 
+
+                            var days_difference = Math.floor(time_difference / (1000 * 60 * 60 * 24));
+
+                            if (days_difference == 0) {
+                                document.write("Aktif Hari Ini");
+                            } else if (days_difference > 0 && days_difference <= 7) {
+                                document.write("Aktif Minggu Ini");
+                            } else if (days_difference > 7 && days_difference <= 30) {
+                                document.write("Aktif Bulan Ini");
+                            } else if (days_difference > 30 && days_difference <= 90) {
+                                document.write("Tidak Aktif Selama 1 Bulan");
+                            } else if (days_difference > 90 && days_difference <= 180) {
+                                document.write("Tidak Aktif Selama 3 Bulan");
+                            } else {
+                                document.write("Tidak Aktif Selama 6 Bulan");
+                            }
+
+                            function searchFunction() {
+                                var input, filter, table, tr, td, i, txtValue;
+                                input = document.getElementById("myInput");
+                                filter = input.value.toUpperCase();
+                                table = document.getElementById("myTable");
+                                tr = table.getElementsByTagName("tr");
+
+                                for (i = 0; i < tr.length; i++) {
+                                  td = tr[i].getElementsByTagName("td")[1];
+                                  if (td) {
+                                    txtValue = td.textContent || td.innerText;
+                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                      tr[i].style.display = "";
+                                    } else {
+                                      tr[i].style.display = "none";
+                                    }
+                                  }
+                                }
+                            }
+                        </script>
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+</body>
+
+</html>

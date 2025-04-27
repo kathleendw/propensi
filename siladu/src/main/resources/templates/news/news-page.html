@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Form Add News</title>
+    <style>
+        /* Tambahkan style untuk mengatur lebar dan tinggi card */
+        .custom-card {
+            position: relative;
+            width: 300px !important;
+            margin: 10px;
+            border: 10px solid #fff;
+            transition: box-shadow 0.3s;
+            border-radius: 15px;
+            /* Round the corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Add box shadow */
+        }
+
+        .custom-card .card-body {
+            overflow: hidden;
+        }
+
+        .card-img-top {
+            max-width: 100%;
+            /* Menyesuaikan lebar gambar dengan lebar card */
+            height: auto;
+            /* Memastikan aspek rasio gambar terjaga */
+        }
+
+        /* Style untuk menu dropdown */
+        .dropdown-menu-container {
+            position: absolute;
+            bottom: 0;
+            /* Align to the bottom of the card-body */
+            right: 0;
+            padding: 10px;
+            overflow: visible !important;
+            display: flex;
+            flex-direction: column;
+            /* Align items in a column */
+            align-items: flex-end;
+            /* Align items to the right */
+        }
+
+        /* Style untuk tombol dropdown */
+        .dropdown-button {
+            background-color: #fff;
+            /* White background */
+            border: 1px solid #fff;
+            /* Add border for better visibility */
+            padding: 5px;
+            /* Add padding for better spacing */
+            cursor: pointer;
+            font-size: 30px;
+            color: black;
+            border-radius: 10%;
+            /* Make it a circle */
+            outline: none;
+            /* Remove the default focus outline */
+            transition: background-color 0.3s;
+            /* Add transition effect */
+            font-size: large;
+        }
+
+        /* Hover effect for the button */
+        .dropdown-button:hover {
+            background-color: #ddd;
+            /* Darker background on hover */
+        }
+
+        /* Style untuk dropdown menu */
+        .dropdown-menu {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            border: 1px solid #ddd;
+            /* Add border for better separation */
+            border-radius: 5px;
+            background-color: #fff;
+            /* White background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+            /* Hide dropdown menu by default */
+        }
+
+        .dropdown-item {
+            padding: 5px 10px;
+            /* Adjusted padding for smaller size */
+            display: block;
+            width: 100%;
+            color: #000;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            /* Add transition effects */
+        }
+
+        .dropdown-item:hover {
+            background-color: #427A5B;
+            /* Darker background on hover */
+            color: #fff;
+            /* Change font color to white on hover */
+        }
+
+        /* Style untuk "Baca Selengkapnya" */
+        .read-more {
+            font-size: 12px;
+            color: #427A5B;
+            cursor: pointer;
+        }
+
+        /* Hover effect */
+        .custom-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Adjusted box shadow on hover */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            /* Center the cards */
+            max-width: 1200px;
+            /* Specify the maximum width to avoid stretching too much */
+            margin: 0 auto;
+            /* Center the container */
+        }
+
+        /* Additional styling for the outer container or card */
+        .outer-container {
+            background-color: #427A5B;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px;
+            min-height: 500px;
+            min-width: 350px;
+        }
+
+        /* Style untuk button "Tambah Berita" */
+        .add-news-button {
+            background-color: #fff;
+            color: #427A5B;
+            border: 2px solid #427A5B;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            border-radius: 30px;
+            margin: 0 auto 30px;
+            /* Center the button horizontally */
+            display: block;
+            /* Make it a block element to take full width */
+            text-align: center;
+            /* Center the text inside the button */
+        }
+
+        .add-news-button:hover {
+            background-color: #427A5B;
+            color: #fff;
+            border-color: #fff;
+            border-radius: 30px;
+        }
+
+        .no-news {
+            color: white;
+            /* Warna teks putih */
+            text-align: center;
+            /* Posisi tulisan ditengah */
+            font-size: 24px;
+            /* Ukuran font diperbesar */
+            margin-top: 20px;
+            /* Jarak dari atas container */
+        }
+
+        #page-title {
+            color: var(--black);
+            /* Text color */
+            text-align: center;
+            /* Center the text */
+            margin: 20px;
+            /* Adjust the bottom margin */
+        }
+    </style>
+    <script>
+        // Function to hide the success and error messages when the close button is clicked
+        $(document).ready(function () {
+            $('#successAlert .close').on('click', function () {
+                $(this).closest('.alert').alert('close');
+            });
+
+            $('#errorAlert .close').on('click', function () {
+                $(this).closest('.alert').alert('close');
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+    <!-- Alert for success message -->
+    <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert"
+        th:if="${param.successMessage}">
+        <strong>Sukses!</strong> [[${param.successMessage}]]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- Alert for error message -->
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert"
+        th:if="${param.errorMessage}">
+        <strong>Gagal!</strong> [[${param.errorMessage}]]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!-- New page title element -->
+    <h1 id="page-title" class="fw-bold">Kelola Berita</h1>
+
+    <div class="outer-container">
+        <button class="add-news-button" onclick="handleAddNewsClick()">+ Tambah Berita</button>
+        <!--<button class="add-news-button" th:href="@{/news/add}">+ Tambah Event</button>-->
+        <div class="container">
+            <!-- Tampilkan pesan jika tidak ada berita -->
+            <p class="no-news" th:if="${#lists.isEmpty(newsList)}">Belum ada berita.</p>
+            <div th:each="news : ${newsList}" class="card custom-card">
+
+
+                <div class="card-header">
+                    <!-- <img alt="" th:src="*{'data:/image/jpg;base64,' + {news.image}}" class="card-img-top"> -->
+                    <img class="card-img-top" th:src="'data:image/jpg;base64, ' + ${base64ImagesMap[news.idNews]}"
+                        alt="">
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Menampilkan judul berita -->
+                    <h5 th:text="${news.judul}" class="card-title"></h5>
+
+                    <!-- Tulisan Baca Selengkapnya -->
+                    <a th:href="@{'/news/' + ${news.idNews}}" class="read-more">Baca Selengkapnya . . .</a>
+
+                    <!-- Dropdown button inside the card-body -->
+                    <div class="dropdown-menu-container">
+                        <!-- Tombol dropdown yang tidak terlihat -->
+                        <button type="button" class="dropdown-button" onclick="toggleDropdown(this)">
+                            &#10247;
+                        </button>
+                        <div class="dropdown-menu">
+                            <!-- Tombol Edit yang mengarah ke halaman edit -->
+                            <a th:href="@{'/news/edit/' + ${news.idNews}}" class="dropdown-item">Edit</a>
+                            <!-- Tombol Hapus yang akan mengirimkan request hapus -->
+                            <!-- <button class="dropdown-item delete-news-button" data-id="${news.idNews}">Hapus</button> -->
+                            <!-- <form id="deleteForm_${news.idNews}"
+                                th:action="@{/news/delete/{idNews}(idNews=${news.idNews})}" method="post">
+                                <input type="hidden" name="idNews" th:value="${news.idNews}" />
+                                <!-- Pass the event ID to the confirmDelete function 
+                                <button type="button" class="dropdown-item delete-news-button"
+                                    onclick="confirmDelete('${news.idNews}')">
+                                    Hapus
+                                </button>
+                            </form> -->
+                            <button type="button" class="dropdown-item delete-news-button" data-toggle="modal"
+                                th:data-target="'#confirmDeleteModal_' + ${news.idNews}">
+                                <div class="delete">
+                                    <!-- <img src="/images/trash-solid.svg" alt="delete"> -->
+                                    <p> Hapus</p>
+                                </div>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" th:id="'confirmDeleteModal_' + ${news.idNews}" tabindex="-1"
+                    aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Apakah Anda yakin ingin menghapus berita ini? Aksi ini tidak dapat diulang
+                            </div>
+                            <div class="modal-footer" style="justify-content: center;">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    style="padding:10px;">Batal</button>
+                                <a th:href="@{/news/delete/{idNews}(idNews=${news.idNews})}" class="btn btn-danger"
+                                    id="deleteLink">Hapus</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        function toggleDropdown(button) {
+            const dropdownMenu = button.nextElementSibling;
+            dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Close dropdown menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const dropdowns = document.getElementsByClassName('dropdown-menu');
+            for (const dropdown of dropdowns) {
+                if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-menu')) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        });
+
+        function handleAddNewsClick() {
+            // Redirect ke halaman tambah berita
+            window.location.href = '/news/add';
+        }
+
+        // Function to remove the success message parameter from the URL
+        function removeMessageFromUrl(message) {
+            var url = window.location.href;
+            var urlParts = url.split('?');
+
+            // Check if URL contains query parameters
+            if (urlParts.length > 1) {
+                var baseUrl = urlParts[0];
+                var queryParams = urlParts[1].split('&');
+
+                // Filter out successMessage parameter
+                var filteredParams = queryParams.filter(function (param) {
+                    return !param.startsWith(message);
+                });
+
+                // Reconstruct URL without successMessage parameter
+                var newUrl = baseUrl + '?' + filteredParams.join('&');
+
+                // Replace current URL with new URL
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<head>
+  <meta charset="UTF-8" />
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>Halaman Utama</title>
+  <style>
+    h1{
+      font-weight: 700;
+    }
+    /*halaman utama*/
+     .halaman-utama{
+      padding-top: 80px;
+     }
+     .halaman-utama .text{
+      margin-left: 50px;
+     }
+    .images img{
+      border-radius: 24px;
+      opacity:50%
+    }
+    span{
+      color:var(--primary-color)
+    }
+    .btn{
+        background-color: var(--primary-color);
+        width: 175px;
+        height: 50px;
+        border-radius: 36px;
+        color:white !important;
+        font-weight: 600;
+        padding-top: 12px;
+        margin-top: 10px;
+    }
+        .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+        /*tentang kami*/
+        .tentang-kami{
+          padding-top:120px;
+        }
+         /*berita*/
+         .berita{
+          padding-top:120px;
+        }
+        @media screen and (max-width: 1200px) {
+          .images .img1{
+          width:200px !important;
+        }
+        .images .img2{
+          width:180px !important;
+        }
+        }
+      @media screen and (max-width: 991px) {
+        .container{
+          max-width:900px;
+          margin-left:30px;
+          margin-right:30px;
+        }
+       .images .img1{
+          width:180px !important;
+        }
+        .images .img2{
+          width:165px !important;
+        }
+      }
+
+      @media screen and (max-width: 776px) {
+        .container{
+          margin:0;
+        }
+        .halaman-utama .text{
+         margin-left: 0;
+        }
+        .images .img1{
+          margin-bottom:0 !important;
+        }
+      .row{
+        display:flex;
+        flex-direction:column;
+        text-align:center;
+      }
+      .text-halaman{
+        width:100% !important;
+      }
+      .text{
+        margin-bottom:50px;
+      }
+      .img2{
+       display:none;
+      }
+      .col-4{
+        width: 100%;
+      }
+      .col-8{
+        width: 90%;
+        margin: auto;
+      }
+      .berita{
+        text-align:center;
+      }
+     
+    }
+  </style>
+</head>
+
+<body>
+  <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <div class="container">
+    <div class="halaman-utama">
+      <div class="row">
+        <div class="col">
+          <div class="text">
+            <p style="font-size: 20px; font-weight:500">Butuh teman Usaha?</p>
+            <h1 class="text-halaman" style=" width:300px"><span>SILADU </span>Siap Bantu UMKM Menjadi Lebih Baik</h1>
+            <a class="btn" href="#tentang-kami">Mengenai Kami</a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="images">
+            <div class="row">
+              <div class="col">
+                <img class="img1" src="/images/photo.jpeg" style="width: 250px; margin-bottom:10px">
+                <img class="img1" src="/images/annual-report.jpg" style="width: 250px">
+                </div>
+                <div class="col">
+                  <img class="img2" src="/images/photo2.jpeg" style="width:230px">
+                </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+    </div>
+    <div class="tentang-kami" id="tentang-kami">
+      <div class="row">
+        <div class="col-4">
+          <h1 style=" padding-top: 50px; padding-bottom:30px">TENTANG<span> KAMI</span></h1>
+        </div>
+        <div class="col-8" style="background-color: var(--primary-color); border-radius:24px; height: auto">
+          <p style="padding:20px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+            incididunt ut labore et dolore magna aliqua. Aenean et tortor at risus 
+            viverra adipiscing at. Suspendisse potenti nullam ac tortor vitae purus 
+            faucibus ornare. Gravida in fermentum et sollicitudin ac orci phasellus 
+            egestas. In aliquam sem fringilla ut morbi tincidunt augue interdum velit. 
+            Feugiat vivamus at augue eget arcu. Ornare arcu dui vivamus arcu felis bibendum ut. 
+            Augue mauris augue neque gravida in fermentum et sollicitudin. Viverra vitae congue 
+            eu consequat ac. Sed libero enim sed faucibus. Enim nulla aliquet porttitor lacus luctus.
+
+            Dolor morbi non arcu risus. Scelerisque eleifend donec pretium vulputate sapien nec. 
+            Nunc pulvinar sapien et ligula ullamcorper malesuada. Orci nulla pellentesque dignissim 
+            enim sit amet venenatis urna. Purus sit amet volutpat consequat mauris nunc. Enim sed 
+            faucibus turpis in eu mi bibendum neque. Lectus sit amet est placerat in egestas erat. 
+            Egestas dui id ornare arcu odio. Mi in nulla posuere sollicitudin aliquam ultrices sagittis. 
+            Enim ut sem viverra aliquet eget sit amet tellus. A diam sollicitudin tempor id eu. Ac ut </p>
+        </div>
+      </div>
+    </div>
+    <div class="visi-misi">
+
+    </div>
+    <div class="berita">
+      <h1>BERITA</h1>
+      <div class="berita-container" style="background-color:var(--primary-color); border-radius:24px; height: auto; text-align: center; padding:30px 50px; margin-top:50px">
+      
+
+        <div th:if="${not #lists.isEmpty(listPaketLayanan)}">
+          <div class="row">
+              <!-- Render up to 3 cards -->
+              <!-- ganti sm list berita -->
+              <div th:each="item, iterStat : ${listPaketLayanan}" class="col" style="margin-bottom:30px" th:if="${iterStat.index &lt; 3}">
+                  <!-- Render card for each item -->
+                  <div class="card" style="width:auto; height:340px; border-radius:24px">
+                      <div class="card-body">
+                       <!-- Untuk gambar berita -->
+                        <img src="/images/photo.jpeg" style="width:100%; height:180px; border-radius:24px; object-fit: cover; object-position: center;">
+                          <!-- Untuk judul -->
+                        <h5 class="card-title" style="color:var(--black); height:20%;font-weight: 500; margin:20px 10px 10px 10px" th:text="${item.namaPaket}"></h5>
+                          <!-- tarok link untuk ke page detail berita-->
+                        <div class="button">
+                              <a style="color:var(--primary-color)"  th:href="@{/paketlayanan/{id}/ubah(id=${item.id})}">
+                                  selengkapnya
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- tarok link untuk ke page yg isinya smua berita yg ada -->
+          <a class="btn" th:href="@{/berita}" style="background-color: white; color:var(--primary-color) !important; border-radius:24px; width:auto">Baca Lebih Banyak</a>
+     
+      </div>
+      <div class="text-center" style="color:#ADB5BD" th:unless="${not #lists.isEmpty(listPaketLayanan)}">
+        <p>Mohon Maaf,</p>
+        <p>Berita Belum Tersedia.</p>
+      </div>
+      
+   
+      </div>
+    </div>
+      
+  </div>
+  <footer
+      th:replace="~{fragments/footer}"
+    ></footer>
+</body>
+
+</html>

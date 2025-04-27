@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Ringkasan Pembayaran</title>
+    <style>
+        */ * {
+            margin: 0;
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+        @media print {
+
+            .table,
+            .table__body {
+                overflow: visible;
+                height: auto !important;
+                width: auto !important;
+            }
+        }
+
+        /*@page {
+    size: landscape;
+    margin: 0; 
+}*/
+
+        body {
+            min-height: 100vh;
+            background: #427A5B;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .table {
+            width: 90.5vw;
+            height: 90vh;
+            background-color: #fff5;
+
+            backdrop-filter: blur(7px);
+            box-shadow: 0 .4rem .8rem #0005;
+            border-radius: .8rem;
+
+            overflow: hidden;
+        }
+
+        .table__header {
+            width: 100%;
+            height: 10%;
+            background-color: #fff4;
+            padding: .8rem 1rem;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table__header .input-group {
+            width: 35%;
+            height: 100%;
+            background-color: #fff5;
+            padding: 0 .8rem;
+            border-radius: 2rem;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: .2s;
+        }
+
+        .table__header .input-group:hover {
+            width: 45%;
+            background-color: #fff8;
+            box-shadow: 0 .1rem .4rem #0002;
+        }
+
+        .table__header .input-group img {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .table__header .input-group input {
+            width: 100%;
+            padding: 0 .5rem 0 .3rem;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .table__body {
+            width: 95%;
+            max-height: calc(89% - 1.6rem);
+            background-color: #fffb;
+
+            margin: .8rem auto;
+            border-radius: .6rem;
+
+            overflow: auto;
+            overflow: overlay;
+        }
+
+
+        .table__body::-webkit-scrollbar {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .table__body::-webkit-scrollbar-thumb {
+            border-radius: .5rem;
+            background-color: #0004;
+            visibility: hidden;
+        }
+
+        .table__body:hover::-webkit-scrollbar-thumb {
+            visibility: visible;
+        }
+
+
+        table {
+            width: 100%;
+        }
+
+        td img {
+            max-width: 400px;
+            height: auto;
+            margin-right: .5rem;
+            vertical-align: middle;
+        }
+
+        table,
+        th,
+        td {
+            border-collapse: collapse;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            left: 0;
+            background-color: #fff;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #0000000b;
+        }
+
+        tbody tr {
+            --delay: .1s;
+            transition: .5s ease-in-out var(--delay), background-color 0s;
+        }
+
+        tbody tr.hide {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        tbody tr:hover {
+            background-color: #fff6 !important;
+        }
+
+        tbody tr td,
+        tbody tr td p,
+        tbody tr td img {
+            transition: .2s ease-in-out;
+        }
+
+        tbody tr.hide td,
+        tbody tr.hide td p {
+            padding: 0;
+            font: 0 / 0 sans-serif;
+            transition: .2s ease-in-out .5s;
+        }
+
+        tbody tr.hide td img {
+            width: 0;
+            height: 0;
+            transition: .2s ease-in-out .5s;
+        }
+
+        .status {
+            padding: .6rem 0.5rem;
+            border-radius: 2rem;
+            text-align: center;
+            color: #fff;
+        }
+
+
+        .status.delivered {
+            background-color: #86e49d;
+            color: #006b21;
+        }
+
+        .status.cancelled {
+            background-color: #d893a3;
+            color: #b30021;
+        }
+
+        .status.pending {
+            background-color: #ebc474;
+        }
+
+        .status.shipped {
+            background-color: #6fcaea;
+        }
+
+
+        @media (max-width: 1000px) {
+            td:not(:first-of-type) {
+                min-width: 12.1rem;
+            }
+        }
+
+        thead th span.icon-arrow {
+            display: inline-block;
+            width: 1.3rem;
+            height: 1.3rem;
+            border-radius: 50%;
+            border: 1.4px solid transparent;
+
+            text-align: center;
+            font-size: 1rem;
+
+            margin-left: .5rem;
+            transition: .2s ease-in-out;
+        }
+
+        thead th:hover span.icon-arrow {
+            border: 1.4px solid #427A5B;
+        }
+
+        thead th:hover {
+            color: #427A5B;
+        }
+
+        thead th.active span.icon-arrow {
+            background-color: #427A5B;
+            color: #fff;
+        }
+
+        thead th.asc span.icon-arrow {
+            transform: rotate(180deg);
+        }
+
+        thead th.active,
+        tbody td.active {
+            color: #427A5B;
+        }
+        .btn-valid{
+            background-color: #427A5B;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 40px;
+        }
+        .btn-valid:hover{
+            border: none;
+            background-color: white;
+            color: #427A5B;
+        }
+        .btn-secondary{
+            background-color:white;
+            color: var(--primary-color);
+            border-radius: 24px;
+            padding: 20px 30px 10px;
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: white;
+            color: #427A5B;
+        }
+        .btn-submit{
+            background-color: #427A5B;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 40px;
+        }
+        .btn-submit:hover{
+            border: none;
+            background-color: white;
+            color: #427A5B;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .btn-invalid{
+            background-color: white;
+            color: #A20A0A;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 40px;
+        }
+        .btn-invalid:hover{
+            border: none;
+            background-color: #A20A0A;
+            color: white;
+        }
+        nav{
+            width: 100%;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+    <br>
+    <div class="table" id="customers_table">
+        <section class="table__header">
+            <h1>Ringkasan Pembayaran</h1>
+            <div class="input-group">
+                <input type="search" placeholder="Cari Data...">
+                <img src="images/search.png" alt="">
+            </div>
+
+        </section>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th> No <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Jenis Kegiatan <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Nama Pemilik <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Metode Pembayaran <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Nomor Telepon <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Waktu Pembayaran <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Total Pembayaran <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Bukti <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Status Pembayaran <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Action <span class="icon-arrow">&UpArrow;</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="pembayaran, index : ${pembayaranList}">
+                        <td th:text="${index.index + 1}"></td>
+                        <td th:text="${pembayaran.jenisKegiatan}"></td>
+                        <td th:text="${pembayaran.namaPemilik}"></td>
+                        <td th:text="${pembayaran.metodePembayaran}"></td>
+                        <td th:text="${pembayaran.nomorTelepon}"></td>
+                        <td th:text="${#dates.format(pembayaran.waktuPembayaran, 'dd MMM, yyyy')}"></td>
+                        <td th:text="${pembayaran.totalBayar}"></td>
+                        <!-- Dummy data untuk bukti pembayaran -->
+                        <!-- <td><img src="dummy.jpg" alt=""></td> -->
+                        <td><img th:src="'data:image/jpg;base64, ' + ${base64ImagesMap[pembayaran.id]}" alt=""></td>
+
+                        <td>
+
+                            <p class="status" th:class="${'status ' + (pembayaran.statusPembayaran == 'MENUNGGU PEMBAYARAN KEMBALI' ? 'pending' : '') + 
+                        (pembayaran.statusPembayaran == 'PERLU KONFIRMASI' ? 'shipped' : '') +
+                        (pembayaran.statusPembayaran == 'SUKSES' ? 'delivered' : '') +
+                        (pembayaran.statusPembayaran == 'GAGAL' ? 'cancelled' : '')}">
+                                <span th:text="${pembayaran.statusPembayaran}"></span>
+                            </p>
+
+                        </td>
+                        <td>
+                            <div class="button-container">
+                                
+                                <form th:action="@{/confirm-pembayaran-valid}" method="POST">
+                                    <input type="hidden" id="idPembayaran" name="idPembayaran" th:value="${pembayaran.id}"/>
+                                    <input type="hidden" id="idPesanan" name="idPesanan" th:value="${pembayaran.idPesanan}"/>
+                                    <button type="submit" class="btn btn-submit" th:if="${pembayaran.statusPembayaran == 'PERLU KONFIRMASI'}">Valid</button>
+                                </form>
+                                <br>
+
+                                <form th:action="@{/confirm-pembayaran-invalid}" method="POST">
+                                    <input type="hidden" id="idPembayaran" name="idPembayaran" th:value="${pembayaran.id}"/>
+                                    <input type="hidden" id="idPesanan" name="idPesanan" th:value="${pembayaran.idPesanan}"/>
+                                    <button type="submit" class="btn btn-submit" th:if="${pembayaran.statusPembayaran == 'PERLU KONFIRMASI'}">Invalid</button>
+                                </form>
+
+                                <!--<div class="button" style="text-align: center;" th:if="${pembayaran.statusPembayaran == 'PERLU KONFIRMASI'}">
+                
+                                    <a href="#" class="btn btn-valid" data-toggle="modal" data-target="#confirmValidModal">
+                                        <div class="valid">
+                                            <p>Valid</p>
+                                        </div>
+                                    </a>
+                                
+                                </div>
+
+                                <div class="button" style="text-align: center; margin-top: 5px;" th:if="${pembayaran.statusPembayaran == 'PERLU KONFIRMASI'}">
+
+                                    <a href="#" class="btn btn-invalid" data-toggle="modal" data-target="#confirmInvalidModal">
+                                        <div class="invalid">
+                                            <p>Invalid</p>
+                                        </div>
+                                    </a>
+                                   
+                                </div> -->
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        const search = document.querySelector('.input-group input'),
+            table_rows = document.querySelectorAll('tbody tr'),
+            table_headings = document.querySelectorAll('thead th');
+
+        // 1. Searching for specific data of HTML table
+        search.addEventListener('input', searchTable);
+
+        function searchTable() {
+            table_rows.forEach((row, i) => {
+                let table_data = row.textContent.toLowerCase(),
+                    search_data = search.value.toLowerCase();
+
+                row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+                row.style.setProperty('--delay', i / 25 + 's');
+            })
+
+            document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+                visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
+            });
+        }
+
+        // 2. Sorting | Ordering data of HTML table
+
+        table_headings.forEach((head, i) => {
+            let sort_asc = true;
+            head.onclick = () => {
+                table_headings.forEach(head => head.classList.remove('active'));
+                head.classList.add('active');
+
+                document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+                table_rows.forEach(row => {
+                    row.querySelectorAll('td')[i].classList.add('active');
+                })
+
+                head.classList.toggle('asc', sort_asc);
+                sort_asc = head.classList.contains('asc') ? false : true;
+
+                sortTable(i, sort_asc);
+            }
+        })
+
+
+        function sortTable(column, sort_asc) {
+            [...table_rows].sort((a, b) => {
+                let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
+                    second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+
+                return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+            })
+                .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
+        }
+
+
+    </script>
+    <!-- Modal 
+    <div class="modal fade" id="confirmValidModal" tabindex="-1" aria-labelledby="confirmValidModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmValidModalLabel">Konfirmasi Bukti Pembayaran Valid</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                Apakah Anda yakin bukti pembayaran tersebut valid?
+                </div>
+                <div class="modal-footer" style="justify-content: center;">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                    <form th:action="@{/confirm-pembayaran-valid}" method="POST">
+                        <input type="hidden" id="idPembayaran" name="idPembayaran" th:value="${pembayaran.id}"/>
+          
+                        <button type="submit" class="btn btn-submit" style="padding:12px; color: white; background-color: var(--primary-color);">
+                            <div class="pesan">
+                                <p>Ya</p>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div class="modal fade" id="confirmInvalidModal" tabindex="-1" aria-labelledby="confirmInvalidModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmInvalidModalLabel">Konfirmasi Bukti Pembayaran Invalid</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                Apakah Anda yakin bukti pembayaran tersebut invalid?
+                </div>
+                <div class="modal-footer" style="justify-content: center;">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                        <button type="submit" class="btn btn-submit" style="padding:12px; color: white; background-color: var(--primary-color);">
+                            <div class="pesan">
+                                <p>Ya</p>
+                            </div>
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div> 
+-->
+</body>
+
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Premium</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <style>
+        .container{
+            margin-top: 50px;
+        }
+        .search-dropdown {
+            padding: 10px 10px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+        .bar-chart,
+        .pie-chart {
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            margin: 25px auto;
+            max-width: 100%;
+        }
+
+        .above {
+            display: flex;
+            align-items: center;
+            /* Memposisikan tulisan di kiri atas */
+            justify-content: space-between;
+            flex-direction: column;
+            /* Mengatur posisi elemen di dalam .above menjadi vertical */
+            margin: auto;
+        }
+
+        .dropdown-container {
+            align-self: flex-end;
+            /* Memposisikan dropdown di kanan atas chart */
+        }
+
+
+        .judul-chart {
+            padding: 15px;
+            margin-top: 20px;
+            font-weight: 700;
+            align-self: flex-start;
+            /* Menghilangkan margin atas dan bawah */
+        }
+
+
+        .bottom-dashboard {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .upper-dashboard {
+            margin: 30px 0;
+        }
+
+        .card-list {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            width: 25%;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .text-img {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .card-img {
+            width: auto
+        }
+
+        .card-text p,
+        .card-text h3,
+        .card-text-percent p,
+        .card-text-percent h3 {
+            font-weight: 700;
+        }
+
+        .card-text h3,
+        .card-text-percent h3 {
+            color: var(--primary-color);
+        }
+
+        .bar-container {
+            width: 100%;
+            /* Mengisi lebar kontainer */
+            margin: 0 auto;
+            /* Menengahkan secara horizontal */
+
+        }
+
+        .income-display {
+            margin: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .card-text-percent {
+            margin: 20px;
+        }
+
+        @media screen and (max-width: 900px) {
+
+            .card-list,
+            .bottom-dashboard,
+            .chart-container {
+                flex-direction: column;
+            }
+
+            .card,
+            .rating,
+            .pie-chart {
+                width: 100%;
+            }
+
+            .judul-chart {
+                text-align: center;
+            }
+        }
+
+        @media screen and (max-width: 380px) {
+            .above {
+                flex-direction: column;
+            }
+
+            .dropdown-container {
+                margin: 0;
+                margin-bottom: 20px;
+            }
+
+            .container h1 {
+                text-align: center;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+
+    <div class="container">
+        <h1 style="margin:50px; text-align: center;" class="fw-bold">Dashboard Member Premium</h1>
+        <div class="upper-dashboard">
+            <div class="card-list">
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${totalPremiumMembers}"></h3>
+                            <p>Total Member Premium</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="text-img">
+                        <div class="card-text">
+                            <h3 th:text="${totalPremiumIncome}"></h3>
+                            <p>Total Penghasilan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <!-- bar chart -->
+            <div class="bottom-dashboard">
+                <div class="bar-chart">
+                    <div class="above" style="max-width: 650px;">
+                        <h4 class="judul-chart">Jumlah Member Premium Baru Per Bulan</h4>
+                        <div class="dropdown-container">
+                            <form id="tahunForm" th:action="@{/dashboardpremium}" method="GET" class="search-form">
+                                <select name="tahun" id="tahunDropdown" class="search-dropdown">
+                                    <option th:each="year : ${years}" th:value="${year}" th:text="${year}"
+                                        th:selected="${!#lists.isEmpty(years) && year == years[__${#lists.size(years) - 1}__]}">
+                                    </option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="bar-container justify-content-center m-2">
+                            <canvas id="premiumMembersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="pie-chart">
+                    <div class="above" style="max-width: 350px;">
+                        <h4 class="judul-chart">Persentase Jumlah Member Basic & Premium</h4>
+                        <div class="pie-container">
+                            <canvas id="memberPercentageChart"></canvas>
+                        </div>
+                        <div class="text-img">
+                            <div class="card-text-percent">
+                                <p>Member Basic</p>
+                                <h3 th:text="${basicMemberPercentage} + '%'"></h3>
+                            </div>
+                            <br>
+                            <div class="card-text-percent">
+                                <p>Member Premium</p>
+                                <h3 th:text="${premiumMemberPercentage} + '%'"></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Get data from Thymeleaf model
+        var basicMemberPercentage = /*[[${basicMemberPercentage}]]*/;
+        var premiumMemberPercentage = /*[[${premiumMemberPercentage}]]*/;
+
+        // Render pie chart
+        var ctxPie = document.getElementById('memberPercentageChart').getContext('2d');
+        var memberPercentageChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Basic Member', 'Premium Member'],
+                datasets: [{
+                    data: [basicMemberPercentage, premiumMemberPercentage],
+                    backgroundColor: ['#427A5B', '#FCF5B8']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
+            }
+        });
+
+        /*]]>*/
+    </script>
+
+
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var ctx = document.getElementById('premiumMembersChart').getContext('2d');
+        var newPremiumMembersByMonth = /*[[${newPremiumMembersByMonth}]]*/[];
+        var barColors = ['#223B2E', '#427A5B', '#B4CD93', '#FCF5B8'];
+        var premiumMembersChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'New Premium Members',
+                    data: newPremiumMembersByMonth,
+                    backgroundColor: barColors,
+                    borderColor: barColors.map(color => darkenColor(color, 20)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        function darkenColor(color, percent) {
+            var f = parseInt(color.slice(1), 16), t = percent < 0 ? 0 : 255, p = percent < 0 ? percent * -1 : percent,
+                R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
+            return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
+        }
+        /*]]>*/
+    </script>
+    <script>
+        document.getElementById('tahunDropdown').addEventListener('change', function () {
+            submitForm();
+        });
+
+        // Function to handle form submission
+        function submitForm() {
+            var selectedYear = document.getElementById('tahunDropdown').value;
+            // alert('Tahun yang dipilih: ' + selectedYear);
+            // Redirect to dashboardpremium with selected year
+            var url = '/dashboardpremium?tahun=' + selectedYear;
+            window.location.href = url
+            // renderChart(selectedYear); // Call renderChart with selectedYear
+        }
+
+        var selectedValue = "[[${selectedYear}]]"; // It will be null if no year is selected
+
+        // Add this script to update the dropdown's selected option after the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            var tahunDropdown = document.getElementById('tahunDropdown');
+            for (var i = 0; i < tahunDropdown.options.length; i++) {
+                if (tahunDropdown.options[i].value === selectedValue) {
+                    tahunDropdown.options[i].selected = true;
+                    break;
+                }
+            }
+        });
+
+    </script>
+   
+
+</body>
+
+</html>

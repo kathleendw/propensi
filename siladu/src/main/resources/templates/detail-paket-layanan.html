@@ -1,0 +1,292 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Paket Layanan</title>
+    <style>
+        .manfaat-container{
+            display:flex;
+            justify-content: center;
+            height: 300px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 24px 0;
+margin:65px 0;
+padding:50px 20px 20px 20px;
+font-weight: 650;
+        }
+  .manfaat-container ul{
+    display: flex;
+    flex-direction: column;
+    gap: 30px 100px;
+    flex-wrap:wrap;
+    padding:0;
+    width:100%;
+    padding-left:30px;
+  }
+    .harga-container .row{
+        text-align: center;
+        gap:60px;
+        margin:20px;
+    }
+    .harga-container .col.regular{
+       border: 1px solid var(--primary-color);
+        border-radius: 24px;
+        padding: 20px;
+        color: var(--primary-color);
+        
+    }
+    .harga-container .col.premium{
+        background-color: #A9D4BC;
+        border-radius: 24px;
+        padding: 20px;
+        color: #175231;
+    }
+    .btn{
+        width: 150px;
+        height: 50px;
+    border-radius: 24px;
+    font-weight: 600;
+    padding-top: 12px;
+    margin-bottom: 30px
+        }
+        .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+      .btn-edit:hover{
+        color:var(--black)
+      }
+      .btn-delete:hover{
+        color: white;
+        background-color: #C11D1D;
+        opacity: 80%;
+      }
+      .btn-delete:hover .delete img {
+            filter: brightness(0) invert(1); /* This will turn the image to white */
+        }
+    .button{
+        display:flex;
+        justify-content: center;
+        gap:40px;
+        margin-top:40px;
+      }
+      .btn-edit{
+        background-color: #A9D4BC;
+        color: var(--black);
+    border-radius: 24px;
+    padding: 20px 30px 10px;
+
+      }
+      .btn-delete{
+        border: 2px solid #C11D1D;
+        opacity: 80%;
+        background-color:white;
+        color: #C11D1D;
+    border-radius: 24px;
+    padding: 20px 20px 12px 20px;
+
+      }
+      .edit img, .delete img{
+        width:20px;
+      }
+      .edit , .delete{
+        display: flex;
+        gap: 15px;
+        height: calc(100% - 10px);
+        align-items: center;
+      }
+      .edit p , .delete p{
+        margin-bottom: 0;
+      }
+      .btn-secondary{
+            border: 2px solid var(--primary-color);
+            background-color:white;
+            color: var(--primary-color);
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: #A9D4BC;
+            color: var(--primary-color);
+        }
+        .item{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+   @media screen and (max-width: 991px) {
+    .manfaat-container{
+        height: 400px;
+          
+        }
+       
+      }
+      @media screen and (max-width: 776px) {
+        .manfaat-container{
+        height: auto;
+          
+        }
+       
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+        $(document).ready(function(){
+             $('#failAlert .close').on('click', function(){
+                 $(this).closest('.alert').alert('close');
+                 removeMessageFromUrl('errorMessage='); // Remove success message from URL
+             });
+         });
+         // Function to remove the success message parameter from the URL
+         function removeMessageFromUrl(message) {
+             var url = window.location.href;
+             var urlParts = url.split('?');
+     
+             // Check if URL contains query parameters
+             if (urlParts.length > 1) {
+                 var baseUrl = urlParts[0];
+                 var queryParams = urlParts[1].split('&');
+     
+                 // Filter out successMessage parameter
+                 var filteredParams = queryParams.filter(function(param) {
+                     return !param.startsWith(message);
+                 });
+     
+                 // Reconstruct URL without successMessage parameter
+                 var newUrl = baseUrl + '?' + filteredParams.join('&');
+                 
+                 // Replace current URL with new URL
+                 window.history.replaceState({}, document.title, newUrl);
+             }
+         }
+    </script>
+     
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    <div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+        <strong>Gagal!</strong><span th:text="${errorMessage}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+        <div class="container">
+            <div class="text-center  pt-5 ">
+                <h1 class="fw-bold"  th:text="${paketLayanan.namaPaket}"></h1>
+                <br>
+                <p th:text="${paketLayanan.deskripsi}"></p>
+            </div>
+            <div class="manfaat-container">
+                <ul>
+                    <!-- Iterate over the 'manfaat' list and display each item within a list item -->
+                    <li th:each="manfaat : ${listManfaat}" th:text="${manfaat}"></li>
+                </ul>
+            </div>
+            <div class="harga-container" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'ADMIN_LAYANAN'}">
+                <div class="row">
+                    <div class="col regular">
+                        <h4 style="height: 50%;" class="fw-bold">Regular</h4>
+                        <h2 class="fw-bold" th:text="'Rp'+${harga}"></h2>
+                    </div>
+                    <a class="card-link col premium" th:href="@{/pilih-member}">
+                        <h4 class="fw-bold">Premium</h4>
+                        <p  style="text-decoration: line-through;"  th:text="'Rp '+${harga}"></p>
+                        <h2 class="fw-bold"th:text="'Rp'+${hargaDiskon}"></h2>
+                    </a>
+                </div>
+            </div>
+            <div class="harga-container" th:if="${userRole == 'MEMBER_PREMIUM'}">
+                <div class="row">
+                    <div style="border: 2px solid var(--primary-color);" class="col regular">
+                        <div class="item">
+                            <h4 class="fw-bold">Harga</h4>
+                            <h2 class="fw-bold"th:text="'Rp'+${hargaDiskon}"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button" style="text-align: center;" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM'}">
+                
+                <a href="#" class="btn btn-edit" style="padding:12px; color: white; background-color: var(--primary-color);" data-toggle="modal" data-target="#confirmPesanModal">
+                    <div class="pesan">
+                        <p>Pesan</p>
+                    </div>
+                </a>
+               
+                <!-- Modal -->
+                <div class="modal fade" id="confirmPesanModal" tabindex="-1" aria-labelledby="confirmPesanModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmPesanModalLabel">Konfirmasi Pemesanan</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            Apakah Anda yakin ingin memesan Paket Layanan ini?
+                            </div>
+                            <div class="modal-footer" style="justify-content: center;">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                                <form    th:action="@{/paketlayanan/{id}/pesan(id=${paketLayanan.id})}"
+                                th:object="${pesananDTO}"
+                                method="POST">
+                                    <button type="submit" class="btn btn-edit" style="padding:12px; color: white; background-color: var(--primary-color);">
+                                        <div class="pesan">
+                                            <p>Pesan</p>
+                                        </div>
+                                    </button>
+                                </form>     
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                    
+            </div>
+        
+            <div class="button" style="text-align: center;"  th:if="${userRole == 'ADMIN_LAYANAN'}">
+                <a href="#" class="btn btn-edit" th:href="@{/paketlayanan/{id}/ubah(id=${paketLayanan.id})}">
+                    <div class="edit">
+                        <img src="/images/pen-solid.svg" alt="edit">
+                        <p> Ubah</p>
+                    
+                    </div>
+                </a>
+                <a href="#" class="btn btn-delete" data-toggle="modal" data-target="#confirmDeleteModal">
+                    <div class="delete">
+                        <img src="/images/trash-solid.svg" alt="delete">
+                        <p> Hapus</p>
+                    </div>
+                </a>
+                   <!-- Modal -->
+                <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        Apakah Anda yakin ingin menghapus paket layanan ini? Aksi ini tidak dapat diulang
+                        </div>
+                        <div class="modal-footer" style="justify-content: center;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                        <a  th:href="@{/paketlayanan/{id}/delete(id=${paketLayanan.id})}"  class="btn btn-danger" id="deleteLink">Hapus</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                
+            </div>
+            
+         
+        </div>
+   
+</body>
+
+</html>

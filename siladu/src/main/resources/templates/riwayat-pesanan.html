@@ -1,0 +1,626 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Riwayat Pesanan</title>
+    <style>
+        .status-container{
+            display: flex;
+            margin-top: 50px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        }
+        .status-container .btn-status{
+            background-color: transparent;
+            color: var(--black);
+            border: none;
+            font-weight: 600;
+            width: calc(100%/3);
+            padding-bottom: 1.5rem;
+            border-radius: 0;
+        }
+        .status-container .btn-status.active{
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .status-container  .btn:focus{
+            box-shadow: none;
+        }
+        .pesanan-container{
+            margin-top: 50px;
+        }
+        .col{
+            gap: 20px;
+            display: flex;
+             flex-direction: column;
+        }
+        .card{
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card h3, .card h4{
+            font-weight: 700;
+        }
+        .card h4{
+            color: var(--black);
+        }
+        .card h3{
+            color: var(--primary-color);
+        }
+        .card p{
+            color: #808080
+        }
+
+
+        .rating{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .rating a{
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+  
+        .button{
+            display:flex;
+            justify-content: center;
+            gap:40px;
+            margin-top:40px;
+        }
+
+        .rating-box {
+            position: relative;
+            background: #fff;
+            padding: 25px 50px 35px;
+            align-items: center;
+            justify-content: center; 
+        }
+        .rating-box header {
+            font-size: 22px;
+            color: #dadada;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .rating-box .stars {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .stars span {
+            color: #e3dede;
+            font-size: 35px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .stars span.active {
+            color: #ff9c1a;
+        }
+
+        .stars .star {
+            font-size: 45px; /* Adjust the font size as needed */
+        }
+
+        .btn-rating{
+            cursor: pointer;
+            color: #427A5B !important;
+        }
+
+        .modal-title{
+            color: #0d1013;
+            font-size: 19px;
+            text-align: center !important;
+            justify-content: center;
+            align-items: center; 
+        }
+
+        .modal-header{
+            text-align: center;
+        }
+
+        .modal-content{
+            border-radius: 20px;
+        }
+
+        .stars{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-ok{
+            display: flex; /* Add this line */
+            align-items: center; /* Add this line */
+            background-color: #427A5B;
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            color:white  !important;
+            font-weight: 600;
+            justify-content: center;
+            align-items: center; 
+            margin: auto;
+            text-align: center; /* Add this line */
+            outline: none;
+            border: none;
+            
+        }
+
+        .btn-ok:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            color:white;
+        }
+
+        .stars {
+            display: flex;
+            align-items: center;
+            flex-direction: row-reverse;
+        }
+
+        .stars input[type="radio"] {
+            display: none;
+        }
+
+        .stars label {
+            cursor: pointer;
+            font-size: 30px;
+            color: #808080; 
+      
+        }
+        
+
+        .stars input[type="radio"]:checked ~ label {
+            color: #ff9c1a;
+        }
+
+        .pesanan-container{
+            margin-bottom: 50px; 
+        }
+
+        .harga-button{
+            margin-left: auto; 
+        }
+
+        
+
+
+    </style>
+  </head>
+
+  <body>
+    <script >
+        // Function to hide the success message when the close button is clicked
+        $(document).ready(function(){
+            $('#successAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('successMessage='); // Remove success message from URL
+            });
+        });
+  
+        $(document).ready(function(){
+            $('#failAlert .close').on('click', function(){
+                $(this).closest('.alert').alert('close');
+                removeMessageFromUrl('errorMessage='); // Remove success message from URL
+            });
+        });
+    
+        // Function to remove the success message parameter from the URL
+        function removeMessageFromUrl(message) {
+            var url = window.location.href;
+            var urlParts = url.split('?');
+    
+            // Check if URL contains query parameters
+            if (urlParts.length > 1) {
+                var baseUrl = urlParts[0];
+                var queryParams = urlParts[1].split('&');
+    
+                // Filter out successMessage parameter
+                var filteredParams = queryParams.filter(function(param) {
+                    return !param.startsWith(message);
+                });
+    
+                // Reconstruct URL without successMessage parameter
+                var newUrl = baseUrl + '?' + filteredParams.join('&');
+                
+                // Replace current URL with new URL
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+        // Function to check URL parameters and activate corresponding button
+
+        function showSection(sectionName) {
+            // Hide all sections
+            var sections = document.getElementsByClassName("pesanan-container");
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = "none";
+            }
+
+            // Show the selected section
+            document.getElementById(sectionName).style.display = "flex";
+
+            // Remove 'active' class from all buttons
+            var buttons = document.getElementsByClassName("btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Add 'active' class to the clicked button
+            document.getElementById("btn" + sectionName.replace(" ", "")).classList.add("active");
+        }
+
+        // Call the function when the page loads
+        window.onload = function() {
+            // Check if there's an active section parameter in the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var activeSection = urlParams.get('activeSection');
+            if (activeSection) {
+                showSection(activeSection);
+            }
+
+        }
+
+        function ratingModal(idPesanan) {
+            // Show confirmation dialog
+            if (confirm("Apakah Anda yakin ingin menghapus event ini?")) {
+                // If user confirms, submit the form
+                document.getElementById('deleteForm_' + idPesanan).submit();
+            }
+        }
+
+        function handleRatingModalOK() {
+            // Mendapatkan nilai atribut data-section dari tombol yang diklik
+            var sectionName = this.dataset.section;
+
+            // Menyembunyikan modal rating
+            $('#ratingModal').modal('hide');
+            
+            // Menampilkan kembali bagian yang sesuai
+            showSection(sectionName);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var okButtons = document.querySelectorAll('.modal .btn-ok');
+            okButtons.forEach(function(button) {
+                button.addEventListener('click', handleRatingModalOK);
+            });
+        });
+
+        
+    </script>
+ 
+     
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    
+  
+    <div class="container">
+        <div class="status-container">
+            <button class="btn btn-status active" onclick="showSection('Layanan')" id="btnLayanan">Layanan</button>
+            <button class="btn btn-status" onclick="showSection('Event')" id="btnEvent">Event</button>
+            <button class="btn btn-status" onclick="showSection('Training')" id="btnTraining">Training</button>
+        </div>
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+            <strong>Sukses!</strong><span th:text="${successMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.successMessage}">
+            <strong>Sukses!</strong>[[${param.successMessage}]]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${param.errorMessage}">
+            <strong>Gagal!</strong>[[${param.errorMessage}]]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+          </div>  
+
+        
+        <!--Layanan-->
+        <div class="pesanan-container" id="Layanan" >
+            <div class="col" >
+                <div th:each="item : ${listPesanan}" th:if="${item.jenisPesanan == 'LAYANAN' and item.statusPesanan == 'STATUS_PEMBAYARAN'}">
+                    <a th:href="@{/paketlayanan/{id}(id=${item.paketLayanan.id})}" class="card-link">
+                        <th:block th:each="pembayaran : ${listPembayaran}">
+                            <div class="card" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                <div class="card-body">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.paketLayanan.namaPaket}"></h4>
+                                    </div>
+                                    <p th:text="${item.paketLayanan.layanan.namaLayanan}"></p>
+                                    <div class="rating">
+                                        <div th:if="${!item.isRated}">
+                                            <a class="btn-rating" data-toggle="modal" th:data-target="'#ratingModal_' + ${item.idPesanan}"><u>Berikan Ratingmu</u></a>
+                                             <!-- Rating Modal -->
+                                            <div class="modal fade" th:id="'ratingModal_' + ${item.idPesanan}" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="ratingModalLabel">Bagaimana Pengalamanmu?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="rating-box">
+                                                                <form th:action="@{/event/rate/{idPesanan}(idPesanan=${item.idPesanan})}" method="post">
+                                                                    <div class="stars">
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'layanan_star1'" name="rating" value="5">
+                                                                        <label th:for="${item.idPesanan} + 'layanan_star1'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'layanan_star2'" name="rating" value="4">
+                                                                        <label th:for="${item.idPesanan} + 'layanan_star2'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'layanan_star3'" name="rating" value="3">
+                                                                        <label th:for="${item.idPesanan} + 'layanan_star3'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'layanan_star4'" name="rating" value="2">
+                                                                        <label th:for="${item.idPesanan} + 'layanan_star4'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'layanan_star5'" name="rating" value="1">
+                                                                        <label th:for="${item.idPesanan} + 'layanan_star5'">&#9733;</label>       
+                                                                    </div>
+                                                                    <div class="text-center mt-3">
+                                                                        <button type="submit" class="btn-ok" data-section="Layanan">OK</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div th:if="${item.isRated}" style="margin-top: 5px;">
+                                            <p>
+                                                <span style="font-size: 18px;">Rating Anda:</span> <img src="/images/star-solid.svg" style="width: 20px; margin-bottom: 2px;"> <span th:text="${item.rating + '/5'}"></span>                                    
+                                            </p>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_BASIC'}">
+                                            <h3 th:text="'Rp' +${item.paketLayanan.hargaPaket}"></h3>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_PREMIUM'}">
+                                            <h3 th:id="'diskonPaketId-' + ${item.idPesanan}"></h3>
+                                        </div>
+                                        <script th:inline="javascript">
+                                            /*<![CDATA[*/
+                                            (function() {
+                                                var hargaPaket = /*[[${item.paketLayanan.hargaPaket}]]*/'';
+                                                var hargaDiskonPaket = Math.floor(hargaPaket * 0.8);
+                                                var diskonPaketId = 'diskonPaketId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                                var diskonPaket = document.getElementById(diskonPaketId);
+                                                if (diskonPaket) {
+                                                    diskonPaket.innerHTML = "Rp" + hargaDiskonPaket;
+                                                } else {
+                                                    console.error("Element not found.");
+                                                }
+                                            })();
+                                            /*]]>*/
+                                        </script>
+                                    </div>               
+                                </div>
+                            </div>
+                        </th:block>
+                    </a>    
+                    <!-- Rating Modal -->
+                    <div class="modal fade" th:id="'ratingModal_' + ${item.idPesanan}" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ratingModalLabel">Bagaimana Pengalamanmu?</h5>
+                                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="rating-box">
+                                        <form th:action="@{/event/rate/{idPesanan}(idPesanan=${item.idPesanan})}" method="post">
+                                            <div class="stars">
+                                                <input type="radio" id="layanan_star1" name="rating" value="5">
+                                                <label for="layanan_star1">&#9733;</label>
+                                                <input type="radio" id="layanan_star2" name="rating" value="4">
+                                                <label for="layanan_star2">&#9733;</label>
+                                                <input type="radio" id="layanan_star3" name="rating" value="3">
+                                                <label for="layanan_star3">&#9733;</label>
+                                                <input type="radio" id="layanan_star4" name="rating" value="2">
+                                                <label for="layanan_star4">&#9733;</label>
+                                                <input type="radio" id="layanan_star5" name="rating" value="1">
+                                                <label for="layanan_star5">&#9733;</label>       
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <button type="submit" class="btn-ok">OK</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--event-->
+        <div class="pesanan-container" id="Event" style="display: none;">
+            <div class="col" >
+                <div th:each="item : ${listPesanan}" th:if="${item.jenisPesanan == 'EVENT' and item.statusPesanan == 'STATUS_PEMBAYARAN'}">
+                    <a th:href="@{/event/{idEvent}(idEvent=${item.event.idEvent})}" class="card-link">
+                        <th:block th:each="pembayaran : ${listPembayaran}">
+                            <div class="card" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                <div class="card-body">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.event.namaEvent}"></h4>
+                                    </div>
+                                    <p>Event</p>
+                                    <div class="rating">
+                                        <div th:if="${!item.isRated}">
+                                            <a class="btn-rating" data-toggle="modal" th:data-target="'#ratingModal_' + ${item.idPesanan}" style="text-decoration: none;"><u>Berikan Ratingmu</u></a>
+                                             <!-- Rating Modal -->
+                                            <div class="modal fade" th:id="'ratingModal_' + ${item.idPesanan}" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title w-100" id="ratingModalLabel">Bagaimana Pengalamanmu?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="rating-box">
+                                                                <form th:action="@{/event/rate/{idPesanan}(idPesanan=${item.idPesanan})}" method="post">
+                                                                    <div class="stars">
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'event_star1'" name="rating" value="5">
+                                                                        <label th:for="${item.idPesanan} + 'event_star1'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'event_star2'" name="rating" value="4">
+                                                                        <label th:for="${item.idPesanan} + 'event_star2'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'event_star3'" name="rating" value="3">
+                                                                        <label th:for="${item.idPesanan} + 'event_star3'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'event_star4'" name="rating" value="2">
+                                                                        <label th:for="${item.idPesanan} + 'event_star4'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'event_star5'" name="rating" value="1">
+                                                                        <label th:for="${item.idPesanan} + 'event_star5'">&#9733;</label>                                                                        
+                                                                    </div>
+                                                                    <div class="text-center mt-3">
+                                                                        <button type="submit" class="btn-ok" data-section="Event">OK</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div th:if="${item.isRated}" style="margin-top: 5px;">
+                                            <p>
+                                                <span style="font-size: 18px;">Rating Anda:</span> <img src="/images/star-solid.svg" style="width: 20px; margin-bottom: 2px;"> <span th:text="${item.rating + '/5'}"></span>                                    
+                                            </p>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_BASIC'}">
+                                            <h3 th:text="'Rp' +${item.event.hargaEvent}"></h3>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_PREMIUM'}">
+                                            <h3 th:id="'diskonEventId-' + ${item.idPesanan}"></h3>
+                                        </div>    
+                                        <script th:inline="javascript">
+                                            /*<![CDATA[*/
+                                            (function() {
+                                                var hargaEvent= /*[[${item.event.hargaEvent}]]*/'';
+                                                var hargaDiskonEvent = Math.floor(hargaEvent * 0.8);
+                                                var diskonEventId = 'diskonEventId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                                var diskonEvent = document.getElementById(diskonEventId);
+                                                if (diskonEvent) {
+                                                    diskonEvent.innerHTML = "Rp" + hargaDiskonEvent;
+                                                } else {
+                                                    console.error("Element not found.");
+                                                }
+                                            })();
+                                            /*]]>*/
+                                        </script>             
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </a>  
+                </div>
+            </div>
+        </div>
+
+        <!--Training-->
+        <div class="pesanan-container" id="Training" style="display: none;">
+            <div class="col" >
+                <div th:each="item : ${listPesanan}" th:if="${item.jenisPesanan == 'TRAINING' and item.statusPesanan == 'STATUS_PEMBAYARAN'}">
+                    <a th:href="@{/training/{idTraining}(idTraining=${item.training.idTraining})}" class="card-link">
+                        <th:block th:each="pembayaran : ${listPembayaran}">
+                            <div class="card" th:if="${pembayaran.id == item.idPembayaran and pembayaran.statusPembayaran == 'SUKSES'}">
+                                <div class="card-body">
+                                    <div class="judul-timer">
+                                        <h4 th:text="${item.training.judulTraining}"></h4>
+                                    </div>
+                                    <p>Training</p>
+                                    <div class="rating">
+                                        <div th:if="${!item.isRated}">
+                                            <a class="btn-rating" data-toggle="modal" th:data-target="'#ratingModal_' + ${item.idPesanan}" style="text-decoration: none;"><u>Berikan Ratingmu</u></a>     
+                                            <!-- Rating Modal -->
+                                            <div class="modal fade" th:id="'ratingModal_' + ${item.idPesanan}" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="ratingModalLabel">Bagaimana Pengalamanmu?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="rating-box">
+                                                                <form th:action="@{/event/rate/{idPesanan}(idPesanan=${item.idPesanan})}" method="post">
+                                                                    <div class="stars">
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'training_star1'" name="rating" value="5">
+                                                                        <label th:for="${item.idPesanan} + 'training_star1'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'training_star2'" name="rating" value="4">
+                                                                        <label th:for="${item.idPesanan} + 'training_star2'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'training_star3'" name="rating" value="3">
+                                                                        <label th:for="${item.idPesanan} + 'training_star3'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'training_star4'" name="rating" value="2">
+                                                                        <label th:for="${item.idPesanan} + 'training_star4'">&#9733;</label>
+                                                                        <input type="radio" th:id="${item.idPesanan} + 'training_star5'" name="rating" value="1">
+                                                                        <label th:for="${item.idPesanan} + 'training_star5'">&#9733;</label>       
+                                                                    </div>
+                                                                    <div class="text-center mt-3">
+                                                                        <button type="submit" class="btn-ok" data-section="Training">OK</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div th:if="${item.isRated}" style="margin-top: 5px;">
+                                            <p>
+                                                <span style="font-size: 18px;">Rating Anda:</span> <img src="/images/star-solid.svg" style="width: 20px; margin-bottom: 2px;"> <span th:text="${item.rating + '/5'}"></span>                                    
+                                            </p>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_BASIC'}">
+                                            <h3 th:text="'Rp' +${item.training.hargaTraining}"></h3>
+                                        </div>
+                                        <div class="harga-button" th:if="${userRole == 'MEMBER_PREMIUM'}">
+                                            <h3 th:id="'diskonTrainingId-' + ${item.idPesanan}"></h3>
+                                        </div>      
+                                        <script th:inline="javascript">
+                                            /*<![CDATA[*/
+                                            (function() {
+                                                var hargaTraining = /*[[${item.training.hargaTraining}]]*/'';
+                                                var hargaDiskonTraining = Math.floor(hargaTraining * 0.8);
+                                                var diskonTrainingId = 'diskonTrainingId-' + /*[[${item.idPesanan}]]*/ ''; 
+                                                var diskonTraining = document.getElementById(diskonTrainingId);
+                                                if (diskonTraining) {
+                                                    diskonTraining.innerHTML = "Rp" + hargaDiskonTraining;
+                                                } else {
+                                                    console.error("Element not found.");
+                                                }
+                                            })();
+                                            /*]]>*/
+                                        </script>                
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </a>  
+                </div>
+            </div>
+        </div>
+
+
+        
+
+    </div>  
+    
+
+
+</body>
+
+</html>

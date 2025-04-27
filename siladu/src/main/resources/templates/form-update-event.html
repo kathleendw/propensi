@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Event</title>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+        body, html {
+        height: 100%; /* Ensure the body and html take up the full viewport height */
+        }
+        
+       .form-container {
+          background-color: white;
+          border-radius: 24px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          max-width: 700px;
+          margin: auto;
+          margin-top: 50px;
+          min-height: 100vh;
+          display: flex; /* Use flexbox */
+          align-items: center;
+          justify-content: center;
+        }
+
+        .row{
+        height: 100%;
+        }
+
+        .col-4{
+            display:flex;
+            align-items: flex-end;
+            background-image: linear-gradient(45deg, #427A5B, #F5F6F7);
+            border-radius:24px 24px 0;
+        }
+
+        .col-4 h3{
+            padding: 25px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .col-8{
+            padding: 25px 45px 25px 25px;
+            margin:auto;
+        }
+
+        label{
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .btn{
+            background-color: #427A5B;
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            color:white;
+            font-weight: 600;
+        }
+
+        .btn:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            color:white;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+        .image-card, .description-card {
+            margin-bottom: 20px;
+        }
+        .image-card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .description-card-body {
+            padding: 1.25rem;
+        }
+        .card-title {
+            font-size: 1.5rem;
+        }
+        .card-text {
+            color: #495057;
+        }
+        .btn-back {
+            background-color: #0d1013;
+            color: #fff;
+        }
+
+        input {
+            outline: none;
+            background-color: #DEE2E6;
+        }
+
+        .btn-submit{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        }
+
+        .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+        }
+
+        .btn-secondary{
+          border: 2px solid var(--primary-color);
+          background-color:white;
+          color: var(--primary-color);
+          padding:11px;
+        }
+        .btn-secondary:hover{
+            border: none;
+            background-color: #A9D4BC;
+            color: var(--primary-color);
+        }
+
+        #deskripsiEvent {
+            min-height: 150px; /* Adjust this value as needed */
+        }
+
+        .error-message{
+            color: red;
+        }
+
+        @media screen and (max-width: 498px) {
+        .tombol{
+          flex-direction: column;
+        }
+        .btn-batal{
+          margin-top: 20px;
+          text-align: center;
+        }
+      }
+
+
+    </style>
+
+</head>
+    
+
+<body>
+
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Update Event')}"></nav>
+        <div class="form-container">
+            <div class="row">
+                <div class="col-4">
+                    <h3>Form Update Event</h3>
+                </div>
+                <div class="col-8">
+                        <form th:action="@{/event/update/{idEvent}(idEvent=${event.idEvent})}" method="POST" th:object="${eventDTO}" enctype="multipart/form-data">
+                            <div>
+                                <label for="namaEvent" class="form-label">Event Name</label>
+                                <input  type="text" class="form-control" id="namaEvent" name="namaEvent" th:field="*{namaEvent}" required>
+                            </div>
+                            <div >
+                                <label for="hargaEvent" class="form-label">Price</label>
+                                <input type="number" class="form-control" id="hargaEvent" name="hargaEvent" th:field="*{hargaEvent}" required>
+                            </div>
+                            <div >
+                                <label for="namaPembicara" class="form-label">Speaker</label>
+                                <input type="text" class="form-control" id="namaPembicara" name="namaPembicara" th:field="*{namaPembicara}" required>
+                            </div>
+                            <div>
+                                <label for="lokasiEvent" class="form-label">Lokasi</label>
+                                <input type="text" class="form-control" id="lokasiEvent" name="lokasiEvent" th:field="*{lokasiEvent}" required>
+                            </div>
+                            <div>
+                                <label for="jadwalEvent" class="form-label">Jadwal</label>
+                                <input type="date" class="form-control" id="jadwalEvent"  name="jadwalEvent" th:value="*{jadwalEvent}"  required >
+                            </div>
+                            <div >
+                                <label for="durasiEvent" class="form-label">Waktu</label>
+                                <input type="text" class="form-control" id="durasiEvent" name="durasiEvent" th:field="*{durasiEvent}" required>
+                            </div>
+                            <div>
+                                <label for="deskripsiEvent" class="form-label">Deskripsi</label>
+                                <textarea type="text" class="form-control" id="deskripsiEvent" name="deskripsiEvent" th:field="*{deskripsiEvent}" required></textarea>
+                            </div>
+                            <div>
+                                <label class="form-label">Image:</label>
+                                <input type="file" name="file" class="form-control"/>
+                            </div>
+                            <div th:if="${errorMessage}" class="error-message">
+                                <p th:text="${errorMessage}"></p>
+                            </div>
+                            <br>
+                            <div class="tombol" style="display: flex; justify-content: center; gap: 20px">
+                                <div class="btn-batal">
+                                    <a type="button" class="btn btn-secondary btn-md" href="javascript:history.back()">Batal</a>
+                                </div>
+                                <div class="btn-submit">
+                                    <button class="btn" type="submit">Update</button>
+                                </div>
+                            </div>
+                            
+                        </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById("jadwalEvent").setAttribute('min', today);
+        </script>
+</body>
+</html>

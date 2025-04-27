@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Profile Member SILADU</title>
+    <style>
+        .profile-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            margin-top: 100px;
+        }
+        h4 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .img{
+
+            size: 1000px;
+            margin-bottom: 20px;
+        }
+        a{
+            color: #427A5B;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+
+        <img class="img" src="/images/403.svg" alt="Page Forbidden" style="width:230px">
+
+        <h4>Forbidden</h4>
+        <br>
+
+        <a class="text" href="/home-member">Kembali</a>
+
+    </div>
+</body>
+</html>

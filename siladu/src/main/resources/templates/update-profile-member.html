@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Update Profile Member SILADU</title>
+    <style>
+        .profile-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            margin: auto;
+        }
+        h3 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+        .form-group {
+            display: flex;
+            justify-content:flex-start;
+            flex-direction: column;
+        }
+        .form-group input {
+            width: 300px; /* Adjust the width as needed */
+        }
+        .form-group label {
+            justify-content:flex-start;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px; /* Add spacing between label and input */
+        }
+        .contact {
+            display: flex;
+            flex-direction: row;
+            justify-content:space-evenly;
+        }
+        .name-umkm {
+            display: flex;
+            flex-direction: row;
+            justify-content:space-evenly;
+        }
+        .btn-update {
+            background-color: #427A5B;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-update:hover {
+            background-color: #9dcab1;
+        }
+        .btn-batal {
+            background-color: transparent;
+            color: #A20A0A;
+            padding: 10px 20px;
+            border: 2px solid #A20A0A;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-batal:hover {
+            background-color: #A20A0A;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <br>
+    <br>
+    <div class="profile-container">
+        <br>
+
+        <div th:if="${param.failed}"> <!--connected to redirect in controller-->
+            <div class="alert alert-info">Update gagal. Pastikan password yang Anda masukkan sama.</div>
+        </div>
+
+        <div th:if="${param.emailError}"> <!--connected to redirect in controller-->
+            <div class="alert alert-info">Update gagal. Email sudah digunakan untuk pendaftaran member.</div>
+        </div>
+
+        <form th:action="@{/update-profile-member}" th:object="${updateProfileDTO}" method="post">
+
+            <div class="name-umkm">
+                <div class="form-group">
+                    <label class="control-label" for="name">
+                        Nama:   
+                    </label>
+                    <input id="name" class="form-control" required autofocus="autofocus" th:field="*{name}"/>
+                </div>
+
+                <br>
+
+                <div class="form-group">
+                    <label class="control-label" for="telephone">
+                        UMKM:    
+                    </label>
+                    <input id="umkm" class="form-control" autofocus="autofocus" th:field="*{umkm}"/>
+                </div>
+            </div>
+
+            <div class="contact">
+                <div class="form-group">
+                    <label class="control-label" for="email">
+                        Email:   
+                    </label>
+                    <input id="email" class="form-control" required autofocus="autofocus" th:field="*{email}"/>
+                </div>
+
+                <br>
+
+                <div class="form-group">
+                    <label class="control-label" for="telephone">
+                        Telephone:    
+                    </label>
+                    <input id="telephone" class="form-control" autofocus="autofocus" th:field="*{telephone}"/>
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <div class="button-container">
+                <button type="button" class="btn btn-batal" onclick="window.location.href='/profile-member';">Batal</button>
+                <button type="submit" class="btn btn-update">Update</button>
+            </div>
+        </form>
+        <br>
+    </div>
+    <br>
+</body>
+</html>

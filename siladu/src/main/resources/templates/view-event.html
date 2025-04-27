@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Detail Event</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+        body {
+            background-color: white
+        }
+        .container {
+            margin-top: 30px;
+            width: 80%;
+            height: auto;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            padding: 0;
+        }
+        .header {
+            width: 100%; 
+            height: 330px;
+            position: relative;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Add this line for shadow */
+
+        }
+        .header img{
+            position: absolute;
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;    
+            z-index: -1;
+        
+        }
+        .gradient{
+            position: absolute;
+            width: 100%; 
+            height: 100%; 
+            background-image: linear-gradient(to right, black, transparent); 
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+            z-index: 0;
+        }
+
+
+        .header-detail {
+            width: 100%; 
+            height: 120px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 4px solid #427A5B;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Add this line for shadow */
+        }
+
+        .about-event {
+            font-size: 1.5rem;
+        }
+        .card-text {
+            color: #495057;
+        }
+
+        .btn-back {
+            background-color: #0d1013;
+            color: #fff;
+        }
+       
+        .btn-daftar {
+            background-color: #427A5B;
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            text-decoration: none;
+            /* border: 2px solid rgb(26, 177, 114); */
+            
+        }
+
+        .btn-daftar:hover {
+            background-color: #ffffff;
+            font-weight: bold;
+            color: rgb(13, 127, 81);
+            outline-color: rgb(13, 127, 81);
+        }
+
+        .btn{
+            /* background-color: rgb(13, 127, 81); */
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            color:white;
+            font-weight: 600;
+            padding-top: 12px;
+            margin-bottom: 30px
+        }
+
+        .btn:hover{
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            color:white;
+        }
+
+    
+
+        .description-header {
+            position: absolute;
+            top: 15%;
+            margin-left: 50px;
+            color: white; /* Set text color */
+            padding: 10px; 
+            overflow: hidden;
+            z-index: 1;
+        }
+        .description-header h3 {
+            color: white; /* Set text color */
+            font-size: 23px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+
+        .row {
+            margin-top: 30px;
+            max-width: 92%;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .alamat{
+            font-size: 1.5rem;
+            margin-top: 12px;
+        }
+        .description-text p {
+            color: white;
+            margin-bottom: 1px;
+            margin-top: 1px;
+            font-size: 17px;
+        }
+
+        .price-img {
+            width: 70px;
+            height: auto;
+        }
+
+        .col-header {
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .columns {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+        }
+
+        .column {
+            flex: 1;
+            flex-basis: calc(25% - 20px);
+            margin-right: 20px;
+            padding: 10px;
+            width: 370px;
+            justify-content: center;
+        }
+
+        .column-detail{
+            align-items: center;
+            display: flex; /* Add this line */
+            flex-direction: column; /* Add this line */
+        }
+
+        .column-header{
+            color: #175231;
+        }
+
+        .premium-price{
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .member-premium-img{
+            width: 21px;
+            margin-left: 7px;
+            margin-bottom: 3px;
+        }
+
+        .registered{
+            background-color: #ffffff;
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            color:  #427A5B;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            text-decoration: none;
+        }
+
+        .registered{
+            background-color: #ffffff;
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            color:  #427A5B;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            text-decoration: none;
+        }
+
+        .rating-box {
+            position: relative;
+            background: #fff;
+            padding: 25px 50px 35px;
+            align-items: center;
+            justify-content: center; 
+        }
+        .rating-box header {
+            font-size: 22px;
+            color: #dadada;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .rating-box .stars {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .stars span {
+            color: #e3dede;
+            font-size: 35px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .stars span.active {
+            color: #ff9c1a;
+        }
+
+        .stars .star {
+            font-size: 40px; /* Adjust the font size as needed */
+        }
+
+        .btn-rating{
+            cursor: pointer;
+        }
+
+        .modal-title{
+            color: #0d1013;
+            font-size: medium;
+        }
+
+
+        .modal-content{
+            border-radius: 20px;
+        }
+
+        .stars{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        iframe{
+            padding-bottom: 20px;
+            margin-bottom: 5px;
+        }
+
+        .description-card{
+            margin-top: 15px;
+        }
+
+        .already-registered {
+            color: #55ec8f;
+        }
+
+     
+        @media screen and (max-width: 992px) {
+            .container {
+                width: 90%;
+            }
+
+            .column-detail{
+                font-size: 0.9rem;
+            }
+            .column-header{
+                font-size: 1.2rem;
+            }
+
+            .card-text{
+                font-size: 0.8rem;
+            }
+
+            .description-header{
+                margin-left: 30px;
+            }
+
+            .description-header h3, p{
+                font-size: 1.2rem;
+            }
+
+            .description-text .card-text{
+                font-size: 0.9rem;
+            }
+
+        }
+
+  
+        @media screen and (max-width: 776px) {
+            .container {
+                width: 100%;
+            }
+
+            .column {
+                flex: 1 1 calc(50% - 20px); 
+            }
+
+            .columns {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .header-detail {
+                flex-direction: column;
+                align-items: center;
+                height: 200px;
+                justify-content: center;
+            }
+
+            .about-event, .alamat{
+                font-size: 1.2rem;
+            }
+
+            iframe{
+                height: 250px;
+            }
+
+            
+        }
+
+
+    </style>
+</head>
+<body>
+    <script>
+        function confirmDaftar(eventId) {
+            // Show confirmation dialog
+            if (confirm("Apakah Anda yakin ingin mendaftar event ini?")) {
+                // If user confirms, submit the form
+                var modal = document.getElementById('confirmDaftarModal_' + eventId);
+                $(modal).modal('show');
+            }
+        }
+        $(document).ready(function(){
+             $('#failAlert .close').on('click', function(){
+                 $(this).closest('.alert').alert('close');
+                 removeMessageFromUrl('errorMessage='); // Remove success message from URL
+             });
+         });
+         // Function to remove the success message parameter from the URL
+         function removeMessageFromUrl(message) {
+             var url = window.location.href;
+             var urlParts = url.split('?');
+     
+             // Check if URL contains query parameters
+             if (urlParts.length > 1) {
+                 var baseUrl = urlParts[0];
+                 var queryParams = urlParts[1].split('&');
+     
+                 // Filter out successMessage parameter
+                 var filteredParams = queryParams.filter(function(param) {
+                     return !param.startsWith(message);
+                 });
+     
+                 // Reconstruct URL without successMessage parameter
+                 var newUrl = baseUrl + '?' + filteredParams.join('&');
+                 
+                 // Replace current URL with new URL
+                 window.history.replaceState({}, document.title, newUrl);
+             }
+         }
+    </script>
+    <nav th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"></nav>
+    <div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+        <strong>Gagal!</strong><span th:text="${errorMessage}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="gradient"></div>
+            <img class="card-img-top" alt="Product Image" th:src="'data:image/jpg;base64,' + ${image}">
+            <div class="description-header">
+                    <h3 class="card-title" th:text="${event.namaEvent}"></h3>
+                    <div class="description-text">
+                        <p class="card-text" th:text="${#strings.length(event.deskripsiEvent) &gt; 100 ? event.deskripsiEvent.substring(0, 50) : event.deskripsiEvent}"></p>
+                        <p class="card-text" th:text="${#strings.length(event.deskripsiEvent) &gt; 100 ? event.deskripsiEvent.substring(50, 100) + '...' : ''}"></p>       
+                        <br>
+                        <p class="card-text" th:text="'Oleh: ' + ${event.namaPembicara}"></p>                 
+                        <br>
+                    </div>
+                    
+                    <div th:if="${!isRegistered}">
+                        <a type="button" class="btn-daftar" data-toggle="modal" th:data-target="'#confirmDaftarModal_' + ${event.idEvent}"
+                            tabindex="-1" aria-labelledby="confirmDaftarModalLabel" aria-hidden="true">Daftar</a>
+                    </div>
+                    <div th:if="${isRegistered}">
+                        <p class="already-registered">Anda telah Terdaftar di event ini<p>
+                    </div>
+                         
+                
+            </div>
+    
+        </div>
+        <div class="header-detail d-flex justify-content-center"> 
+            <section class="columns">
+                <div class="column">
+                    <div class="column-detail">
+                        <h4 class="column-header">Harga</h4> 
+                        <div class="card-text" th:text="'Rp' + ${event.hargaEvent}"></div>
+                        <div class="premium-price">
+                            <div class="card-text" th:text="'Rp ' + ${hargaDiskon}"></div>
+                            
+                            <span class="tt" data-bs-placement="top" title="Member Premium" >
+                                <img class="member-premium-img" src="/images/member-premium.png">
+                            </span>
+                            
+
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="column-detail">
+                         <h4 class="column-header">Jadwal</h4> 
+                        <p class="card-text" th:text="${event.jadwalEvent}"></p>
+                    </div>
+                       
+                </div>
+                <div class="column">
+                    <div class="column-detail">
+                          <h4 class="column-header">Durasi</h4> 
+                        <p class="card-text" th:text="${event.durasiEvent}"></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="column-detail">
+                          <h4 class="column-header">Jenis</h4> 
+                        <p>Offline</p>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        <div class="row justify-content-start mx-auto">
+            <div class="col-md-6">
+                <div class="description-card">
+                    <h3 class="about-event">Tentang Event</h3>
+                    <p class="card-text" th:text="${event.deskripsiEvent}"></p>
+                </div>
+            </div>
+        
+            <div class="col-md-6">
+                <div class="alamat-maps">
+                    <h3 class="alamat">Alamat</h3>
+                    <iframe
+                        width="100%"
+                        height="300"
+                        frameborder="1"
+                        style="border-radius: 10px; box-shadow: 0px 0px 5px rgba(30, 137, 94, 0.1); margin-top: 10px;"
+                        th:src="${event.lokasiEvent.substring(event.lokasiEvent.indexOf('src=')+5)}"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade"  th:id="'confirmDaftarModal_' + ${event.idEvent}" tabindex="-1" aria-labelledby="confirmDaftarModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDaftarModalLabel">Konfirmasi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin mendaftar event ini? 
+                    </div>
+                    <div class="modal-footer" style="justify-content: center;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding:10px;">Batal</button>
+                        <form th:action="@{/event/daftar/{idEvent}(idEvent=${event.idEvent})}"
+                        th:object="${pesananDTO}"
+                        method="POST">
+                            <button type="submit" class="btn btn-success" style="padding:12px; color: white; background-color: var(--primary-color);">
+                                <div class="pesan">
+                                    <p>Daftar</p>
+                                </div>
+                            </button>
+                        </form>     
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+
+    </div>
+    <footer
+        th:replace="~{fragments/footer}">
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tooltips = document.querySelectorAll('.tt')
+        tooltips.forEach(t => {
+          new bootstrap.Tooltip(t)
+        })
+
+        document.addEventListener('DOMContentLoaded', function () {
+    const stars = document.querySelectorAll('.stars .star');
+
+    stars.forEach(star => {
+        star.addEventListener('click', (event) => {
+            const clickedValue = parseInt(event.target.getAttribute('data-value'));
+            stars.forEach((s, index) => {
+                if (index < clickedValue) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active'); 
+                }
+            });
+        });
+    });
+});
+
+    </script>
+    
+
+</body>
+</html>
+

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Profile Member SILADU</title>
+    <style>
+        .profile-container, .message-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h3 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .profile-role {
+            display: inline-block;
+            padding: 5px 10px; 
+            border-radius: 20px;
+        }
+        .profile-role-container {
+            display: flex;
+            align-items: center;
+            justify-content:space-between;
+        }
+        .basic {
+            background-color: #4c4f4c; 
+            color: white;
+        }
+        .premium {
+            background-color: #427A5B;
+            color: white;
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .info-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .info-group input {
+            width: 300px;
+        }
+        .info-group label {
+            font-weight: 600;
+            font-size: 18px;
+            margin-right: 10px; 
+        }
+        .contact {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .umkm{
+            display: flex;
+            flex-direction: row;
+            justify-content:flex-start;
+        }
+        .umkm i {
+            margin-right: 5px;
+        }
+        .underline-text {
+            text-decoration: underline;
+            color:#427A5B
+        }
+        .message {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        textarea {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            width: 100px;
+            height:50px
+        }
+        .btn{
+            background-color: var(--primary-color);
+            width: 150px;
+            height: 50px;
+            border-radius: 24px;
+            font-weight: 600;
+            color:#ffffff;
+        }
+        label{
+          font-weight: 600;
+        }
+        .btn:hover{
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+          color:white;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <br>
+    <br>
+
+    <div class="profile-container">
+
+        <div class="profile-info">
+            <!-- Profile Info -->
+            <h3 th:text="${name}"></h3>
+        
+        <!-- Basic/Premium Label -->
+        <div class="profile-role-container">
+            <div th:if="${role == 'MEMBER_BASIC'}">
+                <h6 class="profile-role basic">Member Basic</h6>
+            </div>
+            <div th:if="${role == 'MEMBER_PREMIUM'}">
+                <h6 class="profile-role premium">Member Premium</h6>
+            </div>
+        </div>    
+        <br>
+        <div class="umkm">
+            <i class="bi bi-house-heart-fill"></i>
+            <h6 class="umkm-name" th:text="${umkm}"></h6>
+        </div>
+        
+        <br>
+        <br>
+
+        <div class="contact">
+            <div class="info-group">
+                <label class="control-label" for="email">
+                    Email:   
+                </label>
+                <input id="email" class="form-control" th:value="${email}" required autofocus="autofocus" disabled/>
+            </div>
+
+            <br>
+
+            <div class="info-group">
+                <label class="control-label" for="telephone">
+                    Telephone:    
+                </label>
+                <input id="telephone" class="form-control" th:value="${telephone}" required autofocus="autofocus" disabled/>
+            </div>
+        </div>
+        <br>
+        <hr style="color:#427A5B;background-color:#427A5B;height:5px;margin-bottom: 10px;">
+
+        <div class="message">
+            <form th:action="@{/send-email}" th:object="${sendEmailDTO}" method="post">
+                <div class="form-group">
+                    <input type="hidden" id="email" name="email" th:value="${email}">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="pesan">
+                        Pesan
+                    </label>
+                    <p th:text="'Kirim reminder ke ' + ${name}"></p>
+                    <textarea id="pesan" class="form-control" th:field="*{pesan}" required autofocus="autofocus"></textarea>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="btn btn-daftar">Kirim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+   
+    <meta charset="UTF-8">
+   
+</head>
+
+<body>
+    <nav th:fragment="navbar"  class="navbar navbar-expand-lg navbar-light" style="background-color: white;">
+        <div class="container-fluid px-0 justify-content-between">
+            <img style="max-width: 50px; margin-left: 10px;" src="/images/logo.PNG">
+            <a th:if="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN'}" class="navbar-brand fw-bold ms-3" style=" color: var(--black);" th:href="@{/home-member}">SILADU</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav" >
+                <ul class="navbar-nav mx-auto" th:if="${userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM'}">
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'tentang-kami'} ? 'active' : ''" class="nav-link ms-3" 
+                        style="font-weight: 600 !important; color: var(--black);"
+                            th:href="@{/home-member}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Homepage</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'tentang-kami'} ? 'active' : ''" class="nav-link ms-3" 
+                        style="font-weight: 600 !important; color: var(--black);"
+                            th:href="@{/tentang-kami-member}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Tentang Kami</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-normal" style="
+                        font-weight: 600 !important;
+                        color: var(--black);
+                        margin-left: 16px !important" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">
+                          Layanan
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding:0px">
+                            <a class="dropdown-item" th:href="@{/layanan/1}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Izin Usaha & SOP</a>
+                            <a class="dropdown-item" th:href="@{/layanan/2}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pendampingan Usaha</a>
+                            <a class="dropdown-item" th:href="@{/layanan/3}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen Keuangan</a>
+                            <a class="dropdown-item" th:href="@{/layanan/4}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen SDM</a>
+                            <a class="dropdown-item" th:href="@{/layanan/5}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Branding & Desain</a>
+                            <a class="dropdown-item" th:href="@{/layanan/6}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pemasaran & Penjualan</a>
+                        </div>
+                      </li>
+                      <th:block th:if="${userRole == 'ADMIN_LAYANAN'}">
+                        <li class="nav-item">
+                            <a th:classappend="${activePage == 'barang'} ? 'active' : ''" class="nav-link ms-3" style="
+                            font-weight: 600 !important;
+                            color: var(--black);"
+                                th:href="@{/event/mengelola}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Event</a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM'}">
+                        <li class="nav-item">
+                            <a th:classappend="${activePage == 'barang'} ? 'active' : ''" class="nav-link ms-3" style="
+                            font-weight: 600 !important;
+                            color: var(--black);"
+                                th:href="@{/event}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Event</a>
+                        </li>
+                    </th:block>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'permintaan'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/training}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Training</a>
+                    </li>
+                    
+                </ul>
+                <ul class="navbar-nav mx-auto" th:if="${userRole == 'ADMIN_LAYANAN' }">
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'dashboard'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/dashboard}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-normal" style="
+                        font-weight: 600 !important;
+                        color: var(--black);
+                        margin-left: 16px !important" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">
+                          Layanan
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding:0px">
+                            <a class="dropdown-item" th:href="@{/layanan/1}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Izin Usaha & SOP</a>
+                            <a class="dropdown-item" th:href="@{/layanan/2}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pendampingan Usaha</a>
+                            <a class="dropdown-item" th:href="@{/layanan/3}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen Keuangan</a>
+                            <a class="dropdown-item" th:href="@{/layanan/4}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen SDM</a>
+                            <a class="dropdown-item" th:href="@{/layanan/5}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Branding & Desain</a>
+                            <a class="dropdown-item" th:href="@{/layanan/6}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pemasaran & Penjualan</a>
+                        </div>
+                      </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'permintaan'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/training}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Training</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'event'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/event/mengelola}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Event</a>
+                    </li>
+                    
+                </ul>
+                <ul class="navbar-nav mx-auto" th:if="${userRole == 'SUPERADMIN' }">
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'dashboard'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/dashboard-keaktifan-member}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Dashboard Keaktifan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'news'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/news}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Berita</a>
+                    </li>
+                   
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'barang'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/dashboardpremium}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Dashboard Premium</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav mx-auto" th:if="${userRole == 'ADMIN_FINANCE' }">
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'barang'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/ringkasan-pembayaran}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Ringkasan Pembayaran</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav mx-auto" th:unless="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN' or userRole == 'ADMIN_FINANCE'}">
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'dashboard'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/tentang-kami}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Tentang Kami</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'news'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/news}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Berita</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-normal" style="
+                        font-weight: 600 !important;
+                        color: var(--black);
+                        margin-left: 16px !important" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">
+                          Layanan
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding:0px">
+                            <a class="dropdown-item" th:href="@{/layanan/1}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Izin Usaha & SOP</a>
+                            <a class="dropdown-item" th:href="@{/layanan/2}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pendampingan Usaha</a>
+                            <a class="dropdown-item" th:href="@{/layanan/3}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen Keuangan</a>
+                            <a class="dropdown-item" th:href="@{/layanan/4}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Manajemen SDM</a>
+                            <a class="dropdown-item" th:href="@{/layanan/5}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Branding & Desain</a>
+                            <a class="dropdown-item" th:href="@{/layanan/6}"onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">Pemasaran & Penjualan</a>
+                        </div>
+                      </li>
+                      <li class="nav-item">
+                        <a th:classappend="${activePage == 'barang'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/event/mengelola}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Event</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:classappend="${activePage == 'permintaan'} ? 'active' : ''" class="nav-link ms-3" style="
+                        font-weight: 600 !important;
+                        color: var(--black);"
+                            th:href="@{/training}" onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">Training</a>
+                    </li>
+                    
+                </ul>
+                <!-- This will only show on lg screens and above -->
+                <div class="nav-item dropdown d-none d-lg-block" th:if="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN' or userRole == 'ADMIN_FINANCE'}">
+                    <a class="nav-link dropdown-toggle" th:href="@{/home-member}" id="namaMemberDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="
+                    font-weight: 600 !important;     width: 180px; text-align: right;;
+                    color: var(--black); " onmouseover=" this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--black)';">
+                     <span style="color: var(--black) !important;" th:text="${user.name}"></span> 
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="namaMemberDropdown" style="padding:0px">
+                        <a class="dropdown-item" th:href="@{/profile-member}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">
+                            <div class="profile" style="display:flex; align-items: center; gap:20px;">
+                                <img src="/images/user-regular.svg" style="width:15px" alt="user">
+                                <p style="margin-bottom:0;"> Profile</p>
+                            </div>
+                        </a>
+                        <a class="dropdown-item" th:href="@{/pesanan}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">
+                            <div class="keluar" style="display:flex; align-items: center; gap:20px;">
+                                <img src="/images/rectangle-list-regular.svg" style="width:15px" alt="keluar">
+                                <p style="margin-bottom:0;"> Pesanan</p>
+                            </div>
+                        </a>
+                        <a class="dropdown-item" th:href="@{/logout}" onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='var(--black)';">
+                            <div class="keluar" style="display:flex; align-items: center; gap:20px;">
+                                <img src="/images/arrow-right-from-bracket-solid.svg" style="width:15px" alt="keluar">
+                                <p style="margin-bottom:0;"> Keluar</p>
+                            </div>
+                        </a>
+                       
+                    </div>
+                </div>
+                <!-- This will only show in the hamburger menu on smaller screens -->
+              
+                <div class="d-lg-none" th:if="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN' or userRole == 'ADMIN_FINANCE'}">
+                    <hr>
+                    <a class="dropdown-item" style="
+                    font-weight: 600 !important;
+                    color: var(--black);"  th:href="@{/profile-member}" >Profile</a>
+                    <a class="dropdown-item" style="
+                    font-weight: 600 !important;
+                    color: var(--black);"  th:href="@{/pesanan}" >Pesanan</a>
+                    <a class="dropdown-item" style="
+                    font-weight: 600 !important;
+                    color: var(--black);" th:href="@{/logout}">Keluar</a>
+                </div>
+
+                <div class="nav-item dropdown d-none d-lg-block" th:unless="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN' or userRole == 'ADMIN_FINANCE'}">
+                    <div class="button-container">
+                        <button type="button" class="btn btn-masuk" onclick="window.location.href='/login';" style=" width: 100px;
+                        padding: 8px;
+                        height: 40px;
+                        border-radius: 36px;
+                        margin-top: 10px;
+                        color:white;
+                        background-color: var(--primary-color);
+                        font-weight: 600;"
+                        
+                        >Masuk</button>
+                        <button type="button" class="btn btn-daftar" onclick="window.location.href='/pilih-member';" style="width: 100px;
+                        padding: 8px;
+                        height: 40px;
+                        background-color: white;
+                        border: 1px solid var(--primary-color);
+                        border-radius: 36px;
+                        margin-top: 10px;
+                        font-weight: 600;
+                        color: var(--primary-color) !important;">Daftar</button>
+                    </div>
+                </div>
+                <!-- This will only show in the hamburger menu on smaller screens -->
+                
+                    <div class="d-lg-none" th:unless="${userRole == 'SUPERADMIN' or userRole == 'MEMBER_BASIC' or userRole == 'MEMBER_PREMIUM' or userRole == 'ADMIN_LAYANAN' or userRole == 'ADMIN_FINANCE'}">
+                        <hr>
+                        <a class="dropdown-item" style="
+                        font-weight: 600 !important;
+                        color: var(--black);" href="/login">Masuk</a>
+                        <a class="dropdown-item" style="
+                        font-weight: 600 !important;
+                        color: var(--black);" href="/pilih-member">Daftar</a>
+                    </div>
+            </div>
+        </div>
+    </nav>
+    
+   
+</body>
+
+</html>

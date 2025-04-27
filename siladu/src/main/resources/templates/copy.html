@@ -1,0 +1,190 @@
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Tambah Paket Layanan</title>
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 280px;
+            height: 350px;
+            border-radius: 24px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn{
+        background-color: var(--primary-color);
+        width: 150px;
+        height: 50px;
+        border-radius: 24px;
+        color:white;
+        font-weight: 600;
+        padding-top: 12px;
+        margin-bottom: 30px
+        }
+        .btn:hover{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        color:white;
+      }
+      .btn-edit:hover{
+        color:var(--black)
+      }
+      .btn-delete:hover{
+        color: white;
+        background-color: #C11D1D;
+        opacity: 80%;
+      }
+      .card-body h4{
+        font-weight: 600;
+        height: 70px;
+      }
+      .card-text{
+        height: 190px;
+        margin-bottom: 0;
+      }
+      .button{
+        display:flex;
+        justify-content: space-between;
+      }
+      .btn-edit{
+        background-color: #A9D4BC;
+        color: var(--black);
+        width: 110px;
+        height: 40px;
+    border-radius: 24px;
+    padding: 18px 14px 10px;
+
+      }
+      .btn-delete{
+        border: 2px solid #C11D1D;
+        opacity: 80%;
+        background-color:white;
+        color: #C11D1D;
+        width: 115px;
+        height: 40px;
+    border-radius: 24px;
+    padding: 18px 15px 10px 10px;
+
+      }
+      .edit img, .delete img{
+        width:12px;
+      }
+      .edit , .delete{
+        display: flex;
+        gap: 15px;
+        height: calc(100% - 10px);
+        align-items: center;
+      }
+      .edit p , .delete p{
+        margin-bottom: 0;
+      }
+      .col{
+        display:flex;
+        justify-content: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // Function to hide the success message when the close button is clicked
+      $(document).ready(function(){
+          $('#successAlert .close').on('click', function(){
+              $(this).closest('.alert').alert('close');
+              removeMessageFromUrl('successMessage='); // Remove success message from URL
+          });
+      });
+
+      $(document).ready(function(){
+          $('#failAlert .close').on('click', function(){
+              $(this).closest('.alert').alert('close');
+              removeMessageFromUrl('errorMessage='); // Remove success message from URL
+          });
+      });
+  
+      // Function to remove the success message parameter from the URL
+      function removeMessageFromUrl(message) {
+          var url = window.location.href;
+          var urlParts = url.split('?');
+  
+          // Check if URL contains query parameters
+          if (urlParts.length > 1) {
+              var baseUrl = urlParts[0];
+              var queryParams = urlParts[1].split('&');
+  
+              // Filter out successMessage parameter
+              var filteredParams = queryParams.filter(function(param) {
+                  return !param.startsWith(message);
+              });
+  
+              // Reconstruct URL without successMessage parameter
+              var newUrl = baseUrl + '?' + filteredParams.join('&');
+              
+              // Replace current URL with new URL
+              window.history.replaceState({}, document.title, newUrl);
+          }
+      }
+  </script>
+    <nav
+      th:replace="~{fragments/navbar :: navbar (page = 'Add Product')}"
+    ></nav>
+    
+
+  <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.successMessage}">
+    <strong>Success!</strong>[[${param.successMessage}]]
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="failAlert" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${param.errorMessage}">
+  <strong>Error!</strong>[[${param.errorMessage}]]
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+    <div class="container">
+        <div class="text-center  pt-5 ">
+            <h1 class="fw-bold"  th:text="${namaLayanan}"></h1>
+            <br>
+            <a class="btn" th:href="@{/paketlayanan/tambah}">Tambah</a>
+        </div>
+          <br>
+          
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" th:if="${not #lists.isEmpty(listPaketLayanan)}">
+            <div class="col" th:each="item : ${listPaketLayanan}">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title" th:text="${item.namaPaket}"></h4>
+                        <p class="card-text" th:text="${item.deskripsi}"></p>
+                        <div class="button">
+                            <a href="#" class="btn btn-edit" th:href="@{/paketlayanan/{id}/ubah(id=${item.id})}">
+                                <div class="edit">
+                                    <img src="/images/pen-solid.svg" alt="edit">
+                                    <p> Ubah</p>
+            
+                                </div>
+                            </a>
+                            <a href="#" class=" btn btn-delete" th:href="@{/paketlayanan/{id}/delete(id=${item.id})}">
+                                <div class="delete">
+                                    <img src="/images/trash-solid.svg" alt="delete">
+                                    <p> Hapus</p>
+                                
+                                </div>
+                            </a>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center" style="color:#ADB5BD" th:unless="${not #lists.isEmpty(listPaketLayanan)}">
+          <p>Mohon Maaf,</p>
+          <p> Paket Layanan Belum Tersedia.</p>
+        </div>
+    </div>
+</body>
+
+</html>

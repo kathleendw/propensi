@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Dashboard Member Premium</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            padding: 20px;
+            width: 80%;
+            margin: auto;
+        }
+
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            /* Center the header text */
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            /* Adjust the column sizes */
+            grid-gap: 20px;
+            align-items: start;
+            /* Align grid items at the start of each row */
+        }
+
+        .block {
+            background-color: #fff;
+            /* Set blocks to white */
+            padding: 20px;
+            border-radius: 36px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            /* Add shadow */
+            height: 150px;
+        }
+
+        .block.large {
+            grid-column: 1 / 3;
+            /* Span across all columns */
+            height: 300px;
+            /* Double height */
+        }
+
+        .block.small {
+            height: 140px;
+            /* Adjust the height of smaller block */
+        }
+
+        .block.extra {
+            grid-column: 1 / 3;
+            /* Span across all columns */
+            height: 100px;
+            /* Adjust the height */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <header class="header">Dashboard Member Premium</header>
+        <div class="content">
+            <div class="block extra"></div>
+            <div class="block small"></div>
+            <div class="block medium"></div>
+            <div class="block large">
+                <h4 class="judul-chart">Jumlah Member Premium Baru Per Bulan</h4>
+                <div class="dropdown-container">
+                    <form id="tahunForm" th:action="@{/dashboardpremium}" method="GET" class="search-form">
+                        <select name="tahun" id="tahunDropdown" class="search-dropdown" onchange="submitForm()">
+                            <option th:each="year : ${years}" th:value="${year}" th:text="${year}"
+                                th:selected="${!#lists.isEmpty(years) && year == years[__${#lists.size(years) - 1}__]}">
+                            </option>
+                        </select>
+                    </form>
+                </div>
+                <div class="bar-container justify-content-center m-2">
+                    <canvas id="premiumMembersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var ctx = document.getElementById('premiumMembersChart').getContext('2d');
+        var newPremiumMembersByMonth = /*[[${newPremiumMembersByMonth}]]*/[];
+
+        var premiumMembersChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'New Premium Members',
+                    data: newPremiumMembersByMonth,
+                    backgroundColor: '#A9D4BC',
+                    borderColor: '#427A5B',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        /*]]>*/
+    </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        /*<![CDATA[*/
+        // Render chart on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the selected year from the dropdown
+            var selectedYear = document.getElementById('tahunDropdown').value;
+            console.log(selectedYear);
+            // If selected year is empty, set it to the current year
+            if (!selectedYear) {
+                selectedYear = new Date().getFullYear().toString();
+                document.getElementById('tahunDropdown').value = selectedYear;
+            }
+            // Fetch and render chart for the selected year
+            renderChart(selectedYear);
+        });
+
+        // Function to handle form submission
+        function submitForm() {
+            var selectedYear = document.getElementById('tahunDropdown').value;
+            //         // Show a pop-up with the selected year
+            // alert('Tahun yang dipilih: ' + selectedYear);
+            // Redirect to dashboardpremium with selected year
+            window.location.href = '/dashboardpremium?tahun=' + selectedYear;
+            // renderChart(selectedYear); // Call renderChart with selectedYear
+        }
+
+
+        // Function to render the chart
+        function renderChart(selectedYear) {
+            // Get the canvas element
+            var ctx = document.getElementById('premiumMembersChart').getContext('2d');
+
+            // Fetch data for the selected year from the server
+            fetch('/dashboardpremium?tahun=' + selectedYear)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract data for the chart
+                    var newPremiumMembersByMonth = data.newPremiumMembersByMonth;
+                    // Show a pop-up with the selected year
+                    alert('Tahun yang dipilih: ' + selectedYear);
+
+                    // Update the chart with the new data
+                    var premiumMembersChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                            datasets: [{
+                                label: 'New Premium Members',
+                                data: newPremiumMembersByMonth,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        /*]]>*/
+    </script>
+</body>
+
+</html>

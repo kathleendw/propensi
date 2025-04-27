@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            width:100%;
+        }
+        footer{
+            margin-top : 100px;
+            position: relative;
+            flex-wrap:wrap;
+            justify-content: center;
+            align-items:center;
+            display: flex;
+            flex-direction: row;
+
+        }
+        footer .col{
+            padding: 0px;
+        }
+        li{
+            list-style: none;
+
+        }
+        footer a{
+            text-decoration: none;
+            color:white;
+            font-size: 12px;
+        }
+        footer p{
+            font-size: 12px;
+        }
+        h5{
+            font-weight:700;
+            color: white;
+        }
+       footer .col span{
+            font-weight:700;
+            color: white;}
+    
+        footer .col p{
+            color:white;
+        }
+       footer .col-6 .row .col{
+            display:flex;
+            flex-direction: column;
+            margin: 0 0 0 35px;
+            gap: 30px;
+        }
+        footer a:hover{
+            color:white;
+            text-decoration: underline !important;
+            text-decoration-color: white;
+            text-underline-offset: 0.3rem; 
+        }
+        .layanan-container{
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        .layanan-container{
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            gap: 5px;
+        }
+          @media screen and (max-width: 776px) {
+        footer{
+            width:100% !important;
+            padding: 20px !important;
+        }
+        footer .col p{
+            color:white;
+            margin-left:0;
+        }
+        footer .col.pertama{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        footer .col-4{
+            margin-bottom: 30px 
+        }
+        footer .row{
+            text-align: center;
+        }
+      
+    }
+    </style>
+</head>
+
+<body>
+    <footer th:fragment="footer"  style="background-color: var(--primary-color); border-radius: 24px 24px 0 0; height:auto; padding: 20px 0px 20px 80px;">
+        <div class="row" style="width:100%; margin-top: 20px; ">
+         <div class="col pertama" style="color:white;">
+          <h2 style="color:white; font-weight: 700;">SILADU</h2>
+          <p style="width: 50%">Teman usaha yang membantu UMKM menjadi lebih baik</p>
+        </div>
+         <div class="col-4">
+            <h5>Layanan</h5>
+                <div class="layanan-container">
+                    <a th:href="@{/layanan/1}">Izin Usaha & SOP</a>
+                    <a th:href="@{/layanan/2}">Pendampingan Usaha</a>
+                    <a th:href="@{/layanan/3}">Manajemen Keuangan</a>
+                    <a th:href="@{/layanan/4}">Manajemen SDM</a>
+                    <a th:href="@{/layanan/5}">Branding & Desain</a>
+                    <a th:href="@{/layanan/6}">Pemasaran & Penjualan</a>
+                 </div>
+       
+         </div>
+         <div class="col" style="display: flex;
+         flex-direction: column;
+         gap: 20px">
+            <a th:href="@{/berita}"><h5>Berita</h5></a>
+            <a th:href="@{/event}"><h5>Event</h5></a>
+            <a th:href="@{/training}"><h5>Training</h5></a>
+       
+         </div>
+         <div class="col">
+            <h5>Kontak:</h5>
+            <p>
+                <span>No. Telp</span><br>+62 8191922993
+            </p>
+            <p>
+                <span>Email</span><br>siladu.tangerangberdaya@gmail.com
+            </p>
+            <p>
+                <span>Lokasi</span><br>Jln. Fasilkom 
+            </p>
+         </div>
+        </div>
+        <p style="position: relative;
+          top: 70;
+          font-size: 12px;">Copyright &#169; 2024 Siladu.com. All Rights Reserved</p>
+
+    </footer>
+    
+   
+</body>
+
+</html>
